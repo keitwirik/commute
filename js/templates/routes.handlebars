@@ -1,0 +1,10 @@
+          {{#if route}}
+            <header>
+              <h3>Routes</h3>
+            </header>
+            <ul>
+            {{#each route}}
+              <li><a href="#" class="route" data-rt="{{rt}}">{{rt}} {{rtnm}}</a></li>
+            {{/each}}
+            </ul>
+          {{/if}}

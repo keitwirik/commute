@@ -1,0 +1,10 @@
+          {{#if stop}}
+            <header>
+              <h3>Stops</h3>
+            </header>
+            <ul>
+            {{#each stop}}
+              <li><a href="#" class="stop" data-stpid="{{stpid}}" data-stpnm="{{stpnm}}" data-rt="{{../rt}}" data-dir="{{../dir}}" >{{stpnm}}</a></li>
+            {{/each}}
+            </ul>
+          {{/if}}

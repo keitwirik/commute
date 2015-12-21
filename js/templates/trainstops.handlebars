@@ -1,0 +1,8 @@
+          <header>
+            <h3>Stops</h3>
+          </header>
+          <ul>
+          {{#each stoplist}}
+            <li><a href="#" class="stop" data-stop="{{parent_stop_id}}" data-desc="{{stop_name}}">{{stop_name}}</a></li>
+          {{/each}}
+          </ul>
