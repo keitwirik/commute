@@ -12,54 +12,79 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
 
 (function($){
 
+  window.Commute = {
+    Views: {},
+    Router: {}
+  };
 
 $('a[data-action]').on('click', function(e){
   var action = $(this).data('action');
   e.preventDefault();
   history.pushState(null, null, '/' + action );
-  callRouter(); // getRoutes
+  Backbone.history.checkUrl();
 });
 
+  Commute.Router = Backbone.Router.extend({
+    routes: {
+      '': 'index',
+      'bus': 'getRoutes',
+      'bus/r/:routeId': 'getDirections', // TODO make sure routeId to function
+      'bus/r/:routeId/:direction': 'getStops',
+      'bus/s/:stopId': 'getPrediction',
+      'trains': 'getTrainlines',
+      'trains/r/:trainline': 'getTrainStops',
+      'trains/r/:trainline/s/:stopId': 'getTrainPrediction'
+    },
+    getRoutes: function() {
+    var request = createRequest(routes.getRoutes, {});
 
+    $.get(request, function(data){
+      wtf = $.xml2json(data);
+
+      context = wtf;
+      render('routes', context, '.info');
+
+    //event listeners
+      $('a.route').on('click', function(e){
+        e.preventDefault();
+        var rt = $(this).attr('data-rt');
+//      history.pushState(null, null, '/' + pathArray[1] + '/r' + rt);
+//      callRouter(); // getDirections
+      });
+    });
+  }
+
+  });
+
+  /*
 function callRouter() {
   $('.spinner').hide();
   clearTimeout(timer);
-  pathArray = window.location.pathname.split('/');
   if(pathArray[1] === 'bus') {
-    if(!pathArray[2]) {
       getRoutes();
-    }
     else if(pathArray[2].charAt(0) === 'r' && !pathArray[3]) {
       params.rt = pathArray[2].substr(1);
       getDirections(params.rt);
-    }
     else if(pathArray[2].charAt(0) === 'r' && pathArray[3]) {
       params.rt = pathArray[2].substr(1);
       params.dir = pathArray[3];
       getStops(params.rt, params.dir);
-    }
     else if(pathArray[2].charAt(0) === 's') {
       params.stpid = pathArray[2].substr(1);
       getPrediction(params.stpid); //GetPredictions
-    }
   }
   else if(pathArray[1] === 'trains') {
-    if(!pathArray[2]) {
       getTrainlines();
-    }
     else if(pathArray[2].charAt(0) === 'r' && !pathArray[3]) {
       params.line = pathArray[2].substr(1);
       getTrainStops(params);
-    }
     else if(pathArray[2].charAt(0) === 'r' && pathArray[3].charAt(0) === 's') {
       params = {
         mapid: pathArray[3].substr(1),
         max: 10
-      };
       getTrainPrediction(params);
-    }
-  }
 }
+*/
 
 function getTrainPrediction(params) {
   var requestRoute = routes.getTrainpredictions;
@@ -182,26 +207,6 @@ function getTrainlines(){
   });
 }
 
-function getRoutes() {
-  var requestRoute = routes.getRoutes;
-  var params = {};
-  var request = createRequest(requestRoute, params);
-
-  $.get(request, function(data){
-     wtf = $.xml2json(data);
-
-    context = wtf;
-    render('routes', context, '.info');
-
-    //event listeners
-    $('a.route').on('click', function(e){
-      e.preventDefault();
-      var rt = $(this).attr('data-rt');
-      history.pushState(null, null, '/' + pathArray[1] + '/r' + rt);
-      callRouter(); // getDirections
-    });
-  });
-}
 
 function getDirections(rt) {
   //FIXME: possible for route to hav only one direction
@@ -685,13 +690,16 @@ var trainsArr = [
 ];
 
 
-
+/*
 $(window).on('popstate pushstate', function() {
   callRouter();
 });
 
 callRouter();
+*/
 
 getStoredTrips();
 
+new Commute.Router();
+Backbone.history.start({pushState: true});
 })(jQuery);
