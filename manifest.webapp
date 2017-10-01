@@ -1,0 +1,14 @@
+{
+  "name": "Commute",
+  "description": "A tracking app for CTA buses and trains",
+  "launch_path": "/index.html",
+  "icons": {
+    "60": "/img/icon60x60.png",
+    "128": "/img/icon128x128.png",
+    "512": "/img/icon512x512.png"
+  },
+  "developer": {
+    "name": "keitwirik",
+    "url": "http://pseudoscope.com"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Commute",
+  "short_name": "Commute",
+  "description": "A tracking app for CTA buses and trains",
+  "launch_path": "/index.html",
+  "icons": [{
+    "src": "/img/icon128x128.png",
+    "sizes": "128x128",
+    "type": "images/png"
+  }, {
+    "src": "img/icon512x512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fd9d2b",
+  "theme_color": "#111111"
+}
