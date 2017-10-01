@@ -67,6 +67,8 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
       };
 
       var request = createRequest(requestRoute, params);
+      $('.spinner').hide();
+      clearTimeout(timer);
       $.get(request, function(data){
         context = $.xml2json(data);
         context.rt = routeId; //TODO remove this after removing it from template
@@ -83,8 +85,88 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
           Backbone.history.checkUrl();
         });
       });
-    }
+    },
 
+    getStops: function(routeId, direction){
+      var requestRoute = api.routes.getStops;
+      var params = {
+        "rt" : routeId,
+        "dir" : direction
+      };
+      var request = createRequest(requestRoute, params);
+      $('.spinner').hide();
+      clearTimeout(timer);
+      $.get(request, function(data){
+        context = $.xml2json(data);
+        context.rt = routeId; //TODO remove after removing from template
+        context.dir = direction;  //TODO remove after removing from template
+        render('stops', context, '.info');
+
+        //event listeners
+        $('a.stop').on('click', function(e){
+          e.preventDefault();
+
+          var stpid = $(this).attr('data-stpid');
+          var stpnm = $(this).attr('data-stpnm');
+          var params = {
+            stop: '/bus/s/' + stpid,
+            stopDesc: routeId + ' ' + direction + ' ' + stpnm,
+            type: 'bus'
+          };
+          addStoredTrip(params);
+          history.pushState(null, null, '/bus/s/' + stpid);
+          Backbone.history.checkUrl();
+        });
+      });
+    },
+
+    getPrediction: function(stopId) {
+      var requestRoute = api.routes.getPredictions;
+      var params = {
+        "stpid" : stopId
+      };
+      var request = createRequest(requestRoute, params);
+
+      $.get(request, function(data){
+        spinner('stop');
+        context = $.xml2json(data);
+        context.stpid = stopId;
+        //sometimes a single object gets passed back
+        if(context.error){
+          console.log('there was an error ', context);
+        } else {
+          if(context.prd instanceof Array) {
+            context.prdIsArr = true; // template looks for this
+            for(var i = 0; i < context.prd.length; i++) {
+              context.prd[i].prdtm = convertDate(context.prd[i].prdtm);
+            }
+    //        context.prd.forEach(function(en){
+    //          console.log('array, more than one bus ', en.prdtm);
+    //        });
+          } else {
+    //        console.log('not array, only one bus ', context.prd);
+            context.prd.prdtm = convertDate(context.prd.prdtm);
+          }
+        }
+
+        render('prediction', context, '.info');
+
+        timer = setTimeout(function(){
+          getPrediction(stopId);
+          ga('send', 'event', 'autorefresh', 'timer', 'autorefresh bus ' + window.location.pathname);
+        }, 60000);
+        // set timer spinner
+        // clear timer with any a click
+        $('a').on('click', function(){clearTimeout(timer);});
+        $('.spinner.bus .spin').off().on('click', function() {
+          clearTimeout(timer);
+          getPrediction(stopId);
+          ga('send', 'event', 'refresh', 'click', 'refresh bus ' + window.location.pathname);
+        });
+      });
+      $('.spinner.bus').show();
+      spinner('start');
+    }
 
 
 
@@ -96,15 +178,8 @@ function callRouter() {
   clearTimeout(timer);
   if(pathArray[1] === 'bus') {
       getRoutes();
-    else if(pathArray[2].charAt(0) === 'r' && !pathArray[3]) {
-      params.rt = pathArray[2].substr(1);
       getDirections(params.rt);
-    else if(pathArray[2].charAt(0) === 'r' && pathArray[3]) {
-      params.rt = pathArray[2].substr(1);
-      params.dir = pathArray[3];
       getStops(params.rt, params.dir);
-    else if(pathArray[2].charAt(0) === 's') {
-      params.stpid = pathArray[2].substr(1);
       getPrediction(params.stpid); //GetPredictions
   }
   else if(pathArray[1] === 'trains') {
@@ -243,90 +318,7 @@ function getTrainlines(){
 
 
 
-function getStops(rt, dir){
-  var requestRoute = api.routes.getStops;
-  var params = {
-    "rt" : rt,
-    "dir" : dir
-  };
-  var request = createRequest(requestRoute, params);
-  $.get(request, function(data){
-    wtf = $.xml2json(data);
-    context = wtf;
-    context.rt = rt;
-    context.dir = dir;
-    render('stops', context, '.info');
 
-    //event listeners
-    $('a.stop').on('click', function(e){
-      e.preventDefault();
-
-      var rt = $(this).attr('data-rt');
-      var dir = $(this).data('dir');
-      var stpid = $(this).attr('data-stpid');
-      var stpnm = $(this).attr('data-stpnm');
-      var params = {
-        stop: '/' + pathArray[1] + '/s' + stpid,
-        stopDesc: rt + ' ' + dir + ' ' + stpnm,
-        type: 'bus'
-      };
-      addStoredTrip(params);
-      history.pushState(null, null, '/' + pathArray[1] + '/s' + stpid);
-      getPrediction(stpid);
-    });
-  });
-}
-
-function getPrediction(stpid) {
-  var requestRoute = api.routes.getPredictions;
-  var params = {
-    "stpid" : stpid
-  };
-
-
-  var request = createRequest(requestRoute, params);
-	$.get(request, function(data){
-    spinner('stop');
-    wtf = $.xml2json(data);
-
-    context = wtf;
-    context.stpid = stpid;
-    //sometimes a single object gets passed back
-    if(context.error){
-      console.log('there was an error ', context);
-    } else {
-      if(context.prd instanceof Array) {
-        context.prdIsArr = true; // template looks for this
-        for(var i = 0; i < context.prd.length; i++) {
-          context.prd[i].prdtm = convertDate(context.prd[i].prdtm);
-        }
-//        context.prd.forEach(function(en){
-//          console.log('array, more than one bus ', en.prdtm);
-//        });
-      } else {
-//        console.log('not array, only one bus ', context.prd);
-        context.prd.prdtm = convertDate(context.prd.prdtm);
-      }
-    }
-
-    render('prediction', context, '.info');
-
-    timer = setTimeout(function(){
-      getPrediction(stpid);
-      ga('send', 'event', 'autorefresh', 'timer', 'autorefresh bus ' + window.location.pathname);
-    }, 60000);
-    // set timer spinner
-    // clear timer with any a click
-    $('a').on('click', function(){clearTimeout(timer);});
-    $('.spinner.bus .spin').off().on('click', function() {
-      clearTimeout(timer);
-      getPrediction(stpid);
-      ga('send', 'event', 'refresh', 'click', 'refresh bus ' + window.location.pathname);
-    });
-	});
-  $('.spinner.bus').show();
-  spinner('start');
-}
 
 function createRequest(requestRoute, params) {
   var request = api.url + requestRoute + '?' + $.param(params);
