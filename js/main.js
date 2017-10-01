@@ -1,11 +1,13 @@
 // this points to a proxy defined in virtualhost
-var apiurl = '/v/';
-var routes = {
-  getRoutes:      'getroutes/',
-  getDirections:  'getdirections/',
-  getStops:       'getstops/',
-  getPredictions: 'getpredictions/',
-  getTrainpredictions: 't/ttarrivals/'
+var api = {
+  url: '/v/',
+  routes: {
+    getRoutes:      'getroutes/',
+    getDirections:  'getdirections/',
+    getStops:       'getstops/',
+    getPredictions: 'getpredictions/',
+    getTrainpredictions: 't/ttarrivals/'
+  }
 };
 
 var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
@@ -17,12 +19,12 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
     Router: {}
   };
 
-$('a[data-action]').on('click', function(e){
-  var action = $(this).data('action');
-  e.preventDefault();
-  history.pushState(null, null, '/' + action );
-  Backbone.history.checkUrl();
-});
+  $('a[data-action]').on('click', function(e){
+    var action = $(this).data('action');
+    e.preventDefault();
+    history.pushState(null, null, '/' + action );
+    Backbone.history.checkUrl();
+  });
 
   Commute.Router = Backbone.Router.extend({
     routes: {
@@ -36,23 +38,55 @@ $('a[data-action]').on('click', function(e){
       'trains/r/:trainline/s/:stopId': 'getTrainPrediction'
     },
     getRoutes: function() {
-    var request = createRequest(routes.getRoutes, {});
+      var request = createRequest(api.routes.getRoutes, {});
 
-    $.get(request, function(data){
-      wtf = $.xml2json(data);
+      $('.spinner').hide();
+      clearTimeout(timer);
 
-      context = wtf;
-      render('routes', context, '.info');
+      $.get(request, function(data){
+        context = $.xml2json(data);
 
-    //event listeners
-      $('a.route').on('click', function(e){
-        e.preventDefault();
-        var rt = $(this).attr('data-rt');
-//      history.pushState(null, null, '/' + pathArray[1] + '/r' + rt);
-//      callRouter(); // getDirections
+        render('routes', context, '.info');
+
+        $('a.route').on('click', function(e){
+          e.preventDefault();
+          var rt = $(this).attr('data-rt');
+          history.pushState(null, null, '/bus/r/' + rt);
+          Backbone.history.checkUrl();
+        });
       });
-    });
-  }
+    },
+
+    getDirections: function(routeId) {
+      //FIXME: possible for route to hav only one direction
+      // and return an obj instead of an array
+      // This should just get passed over with the single route possible
+      var requestRoute = api.routes.getDirections;
+      var params = {
+        "rt" : routeId
+      };
+
+      var request = createRequest(requestRoute, params);
+      $.get(request, function(data){
+        context = $.xml2json(data);
+        context.rt = routeId; //TODO remove this after removing it from template
+        if(context.dir instanceof Array) {
+          context.dirIsArr = true;
+        }
+        render('directions', context, '.info');
+
+        //event listeners
+        $('a.direction').on('click', function(e){
+          e.preventDefault();
+          var direction = $(this).attr('data-dir');
+          history.pushState(null, null, '/bus/r/' + routeId + '/' + direction);
+          Backbone.history.checkUrl();
+        });
+      });
+    }
+
+
+
 
   });
 
@@ -87,7 +121,7 @@ function callRouter() {
 */
 
 function getTrainPrediction(params) {
-  var requestRoute = routes.getTrainpredictions;
+  var requestRoute = api.routes.getTrainpredictions;
   var request = createRequest(requestRoute, params);
   $.get(request, function(data){
     spinner('stop');
@@ -208,39 +242,9 @@ function getTrainlines(){
 }
 
 
-function getDirections(rt) {
-  //FIXME: possible for route to hav only one direction
-  // and return an obj instead of an array
-  // This should just get passed over with the single route possible
-  var requestRoute = routes.getDirections;
-  var params = {
-    "rt" : rt
-  };
-
-  var request = createRequest(requestRoute, params);
-  $.get(request, function(data){
-    wtf = $.xml2json(data);
-
-    context = wtf;
-    context.rt = rt;
-    if(context.dir instanceof Array) {
-      context.dirIsArr = true;
-    }
-    render('directions', context, '.info');
-
-    //event listeners
-    $('a.direction').on('click', function(e){
-      e.preventDefault();
-      var rt = $(this).attr('data-rt');
-      var direction = $(this).attr('data-dir');
-      history.pushState(null, null, '/' + pathArray[1] + '/r' + rt + '/' + direction);
-      callRouter(); // getStops(rt, direction);
-    });
-  });
-}
 
 function getStops(rt, dir){
-  var requestRoute = routes.getStops;
+  var requestRoute = api.routes.getStops;
   var params = {
     "rt" : rt,
     "dir" : dir
@@ -274,7 +278,7 @@ function getStops(rt, dir){
 }
 
 function getPrediction(stpid) {
-  var requestRoute = routes.getPredictions;
+  var requestRoute = api.routes.getPredictions;
   var params = {
     "stpid" : stpid
   };
@@ -325,7 +329,7 @@ function getPrediction(stpid) {
 }
 
 function createRequest(requestRoute, params) {
-  var request = apiurl + requestRoute + '?' + $.param(params);
+  var request = api.url + requestRoute + '?' + $.param(params);
   return request;
 }
 
