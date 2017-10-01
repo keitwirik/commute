@@ -1,7 +1,6 @@
-
 // this points to a proxy defined in virtualhost
 var apiurl = '/v/';
-var action = {
+var routes = {
   getRoutes:      'getroutes/',
   getDirections:  'getdirections/',
   getStops:       'getstops/',
@@ -9,45 +8,40 @@ var action = {
   getTrainpredictions: 't/ttarrivals/'
 };
 
-var wtf = {}, request, context, timer, pathArray, params = {}, recentList = [];
+var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
 
 (function($){
 
 
-$('a[data-action="routes"]').on('click', function(e){
+$('a[data-action]').on('click', function(e){
+  var action = $(this).data('action');
   e.preventDefault();
-  history.pushState(null, null, '/bus');
-  urlChange(); // getRoutes
-});
-
-$('a[data-action="trains"]').on('click', function(e){
-  e.preventDefault();
-  history.pushState(null, null, '/trains');
-  urlChange(); // getRoutes
+  history.pushState(null, null, '/' + action );
+  callRouter(); // getRoutes
 });
 
 
-function urlChange() {
+function callRouter() {
   $('.spinner').hide();
   clearTimeout(timer);
   pathArray = window.location.pathname.split('/');
   if(pathArray[1] === 'bus') {
     if(!pathArray[2]) {
-     getRoutes();
-   }
-   else if(pathArray[2].charAt(0) === 'r' && !pathArray[3]) {
-     params.rt = pathArray[2].substr(1);
-     getDirections(params.rt);
-   }
-   else if(pathArray[2].charAt(0) === 'r' && pathArray[3]) {
-     params.rt = pathArray[2].substr(1);
-     params.dir = pathArray[3];
-     getStops(params.rt, params.dir)
-   }
-   else if(pathArray[2].charAt(0) === 's') {
-     params.stpid = pathArray[2].substr(1);
-     getPrediction(params.stpid); //GetPredictionsi
-   }
+      getRoutes();
+    }
+    else if(pathArray[2].charAt(0) === 'r' && !pathArray[3]) {
+      params.rt = pathArray[2].substr(1);
+      getDirections(params.rt);
+    }
+    else if(pathArray[2].charAt(0) === 'r' && pathArray[3]) {
+      params.rt = pathArray[2].substr(1);
+      params.dir = pathArray[3];
+      getStops(params.rt, params.dir);
+    }
+    else if(pathArray[2].charAt(0) === 's') {
+      params.stpid = pathArray[2].substr(1);
+      getPrediction(params.stpid); //GetPredictions
+    }
   }
   else if(pathArray[1] === 'trains') {
     if(!pathArray[2]) {
@@ -58,17 +52,18 @@ function urlChange() {
       getTrainStops(params);
     }
     else if(pathArray[2].charAt(0) === 'r' && pathArray[3].charAt(0) === 's') {
-      params = {};
-      params.mapid = pathArray[3].substr(1),
-      params.max = 10;
+      params = {
+        mapid: pathArray[3].substr(1),
+        max: 10
+      };
       getTrainPrediction(params);
     }
   }
 }
 
 function getTrainPrediction(params) {
-  var requestAction = action.getTrainpredictions;
-  var request = createRequest(requestAction, params);
+  var requestRoute = routes.getTrainpredictions;
+  var request = createRequest(requestRoute, params);
   $.get(request, function(data){
     spinner('stop');
     wtf = $.xml2json(data);
@@ -120,7 +115,7 @@ function getTrainStops(params) {
 
   render('trainstops', context, '.info');
   //event listeners
-  var stop, stopDesc;
+  var stop;
   $('a.stop').on('click', function(e) {
     var params = {};
     e.preventDefault();
@@ -129,8 +124,8 @@ function getTrainStops(params) {
     params.stop = '/' + pathArray[1] + '/' + pathArray[2] + '/s' + stop;
     params.type = 'train';
     history.pushState(null, null, '/' + pathArray[1] + '/' + pathArray[2] + '/s' + stop );
-    recent(params);
-    urlChange(); // getTrainpredictions
+    addStoredTrip(params);
+    callRouter(); // getTrainpredictions
   });
 }
 
@@ -178,19 +173,19 @@ function getTrainlines(){
   };
   render('trainlines', context, '.info');
   //event listeners
-  var thisStop, thatStop, line;
+  var thisStop, line;
   $('a.line').on('click', function(e) {
     e.preventDefault();
     line = $(this).data('line');
     history.pushState(null, null, '/' + pathArray[1] + '/r' + line);
-    urlChange(); // getTrainStops
+    callRouter(); // getTrainStops
   });
 }
 
 function getRoutes() {
-  var requestAction = action.getRoutes;
+  var requestRoute = routes.getRoutes;
   var params = {};
-  var request = createRequest(requestAction, params);
+  var request = createRequest(requestRoute, params);
 
   $.get(request, function(data){
      wtf = $.xml2json(data);
@@ -203,7 +198,7 @@ function getRoutes() {
       e.preventDefault();
       var rt = $(this).attr('data-rt');
       history.pushState(null, null, '/' + pathArray[1] + '/r' + rt);
-      urlChange(); // getDirections
+      callRouter(); // getDirections
     });
   });
 }
@@ -212,12 +207,12 @@ function getDirections(rt) {
   //FIXME: possible for route to hav only one direction
   // and return an obj instead of an array
   // This should just get passed over with the single route possible
-  var requestAction = action.getDirections;
+  var requestRoute = routes.getDirections;
   var params = {
     "rt" : rt
   };
 
-  var request = createRequest(requestAction, params);
+  var request = createRequest(requestRoute, params);
   $.get(request, function(data){
     wtf = $.xml2json(data);
 
@@ -234,25 +229,25 @@ function getDirections(rt) {
       var rt = $(this).attr('data-rt');
       var direction = $(this).attr('data-dir');
       history.pushState(null, null, '/' + pathArray[1] + '/r' + rt + '/' + direction);
-      urlChange(); // getStops(rt, direction);
+      callRouter(); // getStops(rt, direction);
     });
   });
 }
 
 function getStops(rt, dir){
-  var requestAction = action.getStops;
+  var requestRoute = routes.getStops;
   var params = {
     "rt" : rt,
     "dir" : dir
   };
-  var request = createRequest(requestAction, params);
+  var request = createRequest(requestRoute, params);
   $.get(request, function(data){
     wtf = $.xml2json(data);
     context = wtf;
     context.rt = rt;
     context.dir = dir;
     render('stops', context, '.info');
-    
+
     //event listeners
     $('a.stop').on('click', function(e){
       e.preventDefault();
@@ -265,8 +260,8 @@ function getStops(rt, dir){
         stop: '/' + pathArray[1] + '/s' + stpid,
         stopDesc: rt + ' ' + dir + ' ' + stpnm,
         type: 'bus'
-      }
-      recent(params);
+      };
+      addStoredTrip(params);
       history.pushState(null, null, '/' + pathArray[1] + '/s' + stpid);
       getPrediction(stpid);
     });
@@ -274,13 +269,13 @@ function getStops(rt, dir){
 }
 
 function getPrediction(stpid) {
-  var requestAction = action.getPredictions;
+  var requestRoute = routes.getPredictions;
   var params = {
     "stpid" : stpid
   };
 
-  
-  var request = createRequest(requestAction, params);
+
+  var request = createRequest(requestRoute, params);
 	$.get(request, function(data){
     spinner('stop');
     wtf = $.xml2json(data);
@@ -296,20 +291,17 @@ function getPrediction(stpid) {
         for(var i = 0; i < context.prd.length; i++) {
           context.prd[i].prdtm = convertDate(context.prd[i].prdtm);
         }
-        context.prd.forEach(function(en){
-          console.log('array, more than one bus ', en.prdtm);
-        });
+//        context.prd.forEach(function(en){
+//          console.log('array, more than one bus ', en.prdtm);
+//        });
       } else {
-        console.log('not array, only one bus ', context.prd);
+//        console.log('not array, only one bus ', context.prd);
         context.prd.prdtm = convertDate(context.prd.prdtm);
       }
     }
 
     render('prediction', context, '.info');
 
-    // refresh results every minute
-    // timer seems to need to be in global
-    // scope to be clearable
     timer = setTimeout(function(){
       getPrediction(stpid);
       ga('send', 'event', 'autorefresh', 'timer', 'autorefresh bus ' + window.location.pathname);
@@ -327,8 +319,8 @@ function getPrediction(stpid) {
   spinner('start');
 }
 
-function createRequest(requestAction, params) {
-  var request = apiurl + requestAction + '?' + $.param(params);
+function createRequest(requestRoute, params) {
+  var request = apiurl + requestRoute + '?' + $.param(params);
   return request;
 }
 
@@ -341,16 +333,14 @@ function render(templateID, context, target) {
 }
 
 function convertDate(arrivalTime) {
-  var time = [arrivalTime.slice(0,4), ' ', arrivalTime.slice(4,6), ' ', arrivalTime.slice(6,8), arrivalTime.slice(8)].join('');
-  if(time = new Date(time)) {
-    var now = new Date();
-    if(time > now) {
-      return Math.ceil(((time - now) / 1000) / 60); //returns minutes rounded up to arrival time
-    }
+  var time = new Date([arrivalTime.slice(0,4), '/', arrivalTime.slice(4,6), '/', arrivalTime.slice(6,8), arrivalTime.slice(8)].join(''));
+  var now = new Date();
+  if(time > now) {
+    return Math.ceil(((time - now) / 1000) / 60); //returns minutes rounded up to arrival time
   }
 }
 
-function recent(params) {
+function addStoredTrip(params) {
   if(typeof(Storage) !== "undefined") {
     if(localStorage.getItem('recent') === null){
       localStorage.setItem('recent', JSON.stringify(recentList));
@@ -358,10 +348,10 @@ function recent(params) {
     recentList = JSON.parse(localStorage.getItem('recent'));
     recentList.forEach(function(i){
     	if(i.stop === params.stop) {
-		recentList.splice(recentList.indexOf(i), 1);
-		return false;
-	}
-    }); 
+		    recentList.splice(recentList.indexOf(i), 1);
+		    return false;
+      }
+    });
     // if not already the most recent then push to recentList
     recentList.push(params);
     recentList.length <= 10 || recentList.shift();
@@ -369,7 +359,7 @@ function recent(params) {
   }
 }
 
-function checkRecent() {
+function getStoredTrips() {
   if(typeof(Storage) !== 'undefined') {
     if(localStorage.getItem('recent') !== null) {
       recentList = JSON.parse(localStorage.getItem('recent'));
@@ -378,15 +368,11 @@ function checkRecent() {
       $('#recent a').on('click', function(e) {
         e.preventDefault();
         history.pushState(null, null, $(this).data('url'));
-        urlChange(); // getwhatever stop
+        callRouter(); // getwhatever stop
 	ga('send', 'event', 'recentlist', 'click', 'recent ' + $(this).data('url'));
       });
     }
   }
-}
-
-function refreshEvent(params) {
-
 }
 
 function spinner(s) {
@@ -700,15 +686,12 @@ var trainsArr = [
 
 
 
-$(window).on('popstate', function() {
-  urlChange();
-});
-$(window).on('pushstate', function() {
-  urlChange();
+$(window).on('popstate pushstate', function() {
+  callRouter();
 });
 
-urlChange();
+callRouter();
 
-checkRecent();
+getStoredTrips();
 
 })(jQuery);

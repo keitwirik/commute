@@ -1,0 +1,20 @@
+AddType application/x-web-app-manifest+json .webapp
+
+<FilesMatch "(.*)">
+  Order Allow,Deny
+  Allow from all
+</FilesMatch>
+
+# rewrite for push history state
+<ifModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !index
+    RewriteRule (.*) index.html [L]
+</ifModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive on
+  ExpiresByType image/jpeg                            "access plus 1 month"
+</IfModule>
