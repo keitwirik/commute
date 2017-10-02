@@ -19,18 +19,11 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
     Router: {}
   };
 
-  $('a[data-action]').on('click', function(e){
-    var action = $(this).data('action');
-    e.preventDefault();
-    history.pushState(null, null, '/' + action );
-    Backbone.history.checkUrl();
-  });
-
   Commute.Router = Backbone.Router.extend({
     routes: {
       '': 'index',
       'bus': 'getRoutes',
-      'bus/r/:routeId': 'getDirections', // TODO make sure routeId to function
+      'bus/r/:routeId': 'getDirections',
       'bus/r/:routeId/:direction': 'getStops',
       'bus/s/:stopId': 'getPrediction',
       'trains': 'getTrainlines',
@@ -166,220 +159,194 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
       });
       $('.spinner.bus').show();
       spinner('start');
-    }
+    },
+
+    getTrainlines: function(){
+      context = {
+        line:  [
+          {
+            line_id: 9,
+            line_name: 'Red'
+          },
+          {
+            line_id: 10,
+            line_name: 'Blue'
+          },
+          {
+            line_id: 11,
+            line_name: 'Brown'
+          },
+          {
+            line_id: 12,
+            line_name: 'Green'
+          },
+          {
+            line_id: 13,
+            line_name: 'Purple'
+          },
+          {
+            line_id: 14,
+            line_name: 'Purple Express'
+          },
+          {
+            line_id: 15,
+            line_name: 'Yellow'
+          },
+          {
+            line_id: 16,
+            line_name: 'Pink'
+          },
+          {
+            line_id: 17,
+            line_name: 'Orange'
+          }
+        ]
+      };
+      render('trainlines', context, '.info');
+      //event listeners
+      var thisStop, line;
+      $('a.line').on('click', function(e) {
+        e.preventDefault();
+        line = $(this).data('line');
+        history.pushState(null, null, '/trains/r/' + line);
+        Backbone.history.checkUrl();
+      });
+    },
 
 
+    getTrainStops: function(trainline) {
+      context = {
+        stoplist: []
+      };
+      var thisStop, thatStop;
+      trainsArr.forEach(function(e) {
+        if(thisStop = e[trainline] === 1) {
+          var thisStop = e[7];
+          if(thisStop !== thatStop) {
+            var tmp = {
+              parent_stop_id: e[7],
+              stop_name: e[6]
+            };
+            context.stoplist.push(tmp);
+          }
+          thatStop = thisStop;
+        }
+      });
 
-  });
+      render('trainstops', context, '.info');
+      //event listeners
+      var stop;
+      $('a.stop').on('click', function(e) {
+        var params = {};
+        e.preventDefault();
+        stop = $(this).data('stop');
+        params.stopDesc = $(this).data('desc');
+        params.stop = '/trains/r/' + trainline + '/s/' + stop;
+        params.type = 'train';
+        history.pushState(null, null, '/trains/r/' + trainline + '/s/' + stop );
+        Backbone.history.checkUrl();
+        addStoredTrip(params);
+      });
+    },
 
-  /*
-function callRouter() {
-  $('.spinner').hide();
-  clearTimeout(timer);
-  if(pathArray[1] === 'bus') {
-      getRoutes();
-      getDirections(params.rt);
-      getStops(params.rt, params.dir);
-      getPrediction(params.stpid); //GetPredictions
-  }
-  else if(pathArray[1] === 'trains') {
-      getTrainlines();
-    else if(pathArray[2].charAt(0) === 'r' && !pathArray[3]) {
-      params.line = pathArray[2].substr(1);
-      getTrainStops(params);
-    else if(pathArray[2].charAt(0) === 'r' && pathArray[3].charAt(0) === 's') {
-      params = {
-        mapid: pathArray[3].substr(1),
+    getTrainPrediction: function(trainline, stopId) {
+      var requestRoute = api.routes.getTrainpredictions;
+      var params = {
+        mapid: stopId,
         max: 10
-      getTrainPrediction(params);
-}
-*/
+      };
+      var request = createRequest(requestRoute, params);
+      $.get(request, function(data){
+        spinner('stop');
+        context = $.xml2json(data);
+        for(var i = 0; i < context.eta.length; i++) {
+              context.eta[i].arrD = convertDate(context.eta[i].arrT);
+        }
+        render('trainpredictions', context, '.info');
 
-function getTrainPrediction(params) {
-  var requestRoute = api.routes.getTrainpredictions;
-  var request = createRequest(requestRoute, params);
-  $.get(request, function(data){
-    spinner('stop');
-    wtf = $.xml2json(data);
-    context = wtf;
-    for(var i = 0; i < context.eta.length; i++) {
-          context.eta[i].arrD = convertDate(context.eta[i].arrT);
+        // refresh results every minute
+        // timer seems to need to be in global
+        // scope to be clearable
+        timer = setTimeout(function(){
+          getTrainPrediction(params);
+          ga('send', 'event', 'autorefresh', 'timer', 'autorefresh train ' + window.location.pathname);
+        }, 60000);
+        // set timer spinner
+        // clear timer with any a click
+        $('a').on('click', function(){clearTimeout(timer);});
+      });
+      $('.spinner.train').show();
+      $('.spinner.train .spin').off().on('click', function() {
+        clearTimeout(timer);
+        getTrainPrediction(params);
+        ga('send', 'event', 'refresh', 'click', 'refresh train ' + window.location.pathname);
+      });
+      spinner('start');
     }
-    render('trainpredictions', context, '.info');
 
-    // refresh results every minute
-    // timer seems to need to be in global
-    // scope to be clearable
-    timer = setTimeout(function(){
-      getTrainPrediction(params);
-      ga('send', 'event', 'autorefresh', 'timer', 'autorefresh train ' + window.location.pathname);
-    }, 60000);
-    // set timer spinner
-    // clear timer with any a click
-    $('a').on('click', function(){clearTimeout(timer);});
-  });
-  $('.spinner.train').show();
-  $('.spinner.train .spin').off().on('click', function() {
-    clearTimeout(timer);
-    getTrainPrediction(params);
-    ga('send', 'event', 'refresh', 'click', 'refresh train ' + window.location.pathname);
-  });
-  spinner('start');
-}
-
-function getTrainStops(params) {
-  var line = params.line;
-  context = {
-    stoplist: []
-  };
-  var thisStop, thatStop;
-  trainsArr.forEach(function(e) {
-    if(thisStop = e[line] === 1) {
-      var thisStop = e[7];
-      if(thisStop !== thatStop) {
-        var tmp = {
-          parent_stop_id: e[7],
-          stop_name: e[6]
-        };
-        context.stoplist.push(tmp);
-      }
-      thatStop = thisStop;
-    }
   });
 
-  render('trainstops', context, '.info');
-  //event listeners
-  var stop;
-  $('a.stop').on('click', function(e) {
-    var params = {};
-    e.preventDefault();
-    stop = $(this).data('stop');
-    params.stopDesc = $(this).data('desc');
-    params.stop = '/' + pathArray[1] + '/' + pathArray[2] + '/s' + stop;
-    params.type = 'train';
-    history.pushState(null, null, '/' + pathArray[1] + '/' + pathArray[2] + '/s' + stop );
-    addStoredTrip(params);
-    callRouter(); // getTrainpredictions
-  });
-}
 
-
-function getTrainlines(){
-  context = {
-    line:  [
-      {
-        line_id: 9,
-        line_name: 'Red'
-      },
-      {
-        line_id: 10,
-        line_name: 'Blue'
-      },
-      {
-        line_id: 11,
-        line_name: 'Brown'
-      },
-      {
-        line_id: 12,
-        line_name: 'Green'
-      },
-      {
-        line_id: 13,
-        line_name: 'Purple'
-      },
-      {
-        line_id: 14,
-        line_name: 'Purple Express'
-      },
-      {
-        line_id: 15,
-        line_name: 'Yellow'
-      },
-      {
-        line_id: 16,
-        line_name: 'Pink'
-      },
-      {
-        line_id: 17,
-        line_name: 'Orange'
-      }
-    ]
-  };
-  render('trainlines', context, '.info');
-  //event listeners
-  var thisStop, line;
-  $('a.line').on('click', function(e) {
-    e.preventDefault();
-    line = $(this).data('line');
-    history.pushState(null, null, '/' + pathArray[1] + '/r' + line);
-    callRouter(); // getTrainStops
-  });
-}
-
-
-
-
-
-function createRequest(requestRoute, params) {
-  var request = api.url + requestRoute + '?' + $.param(params);
-  return request;
-}
-
-function render(templateID, context, target) {
-  //var source = $("#" + templateID).html();
-  //var temp = Handlebars.compile(source);
-  var temp = Handlebars.templates[templateID];
-  var html = temp(context);
-  $(target).html(html);
-}
-
-function convertDate(arrivalTime) {
-  var time = new Date([arrivalTime.slice(0,4), '/', arrivalTime.slice(4,6), '/', arrivalTime.slice(6,8), arrivalTime.slice(8)].join(''));
-  var now = new Date();
-  if(time > now) {
-    return Math.ceil(((time - now) / 1000) / 60); //returns minutes rounded up to arrival time
+  function createRequest(requestRoute, params) {
+    var request = api.url + requestRoute + '?' + $.param(params);
+    return request;
   }
-}
 
-function addStoredTrip(params) {
-  if(typeof(Storage) !== "undefined") {
-    if(localStorage.getItem('recent') === null){
+  function render(templateID, context, target) {
+    //var source = $("#" + templateID).html();
+    //var temp = Handlebars.compile(source);
+    var temp = Handlebars.templates[templateID];
+    var html = temp(context);
+    $(target).html(html);
+  }
+
+  function convertDate(arrivalTime) {
+    var time = new Date([arrivalTime.slice(0,4), '/', arrivalTime.slice(4,6), '/', arrivalTime.slice(6,8), arrivalTime.slice(8)].join(''));
+    var now = new Date();
+    if(time > now) {
+      return Math.ceil(((time - now) / 1000) / 60); //returns minutes rounded up to arrival time
+    }
+  }
+
+  function addStoredTrip(params) {
+    if(typeof(Storage) !== "undefined") {
+      if(localStorage.getItem('recent') === null){
+        localStorage.setItem('recent', JSON.stringify(recentList));
+      }
+      recentList = JSON.parse(localStorage.getItem('recent'));
+      recentList.forEach(function(i){
+        if(i.stop === params.stop) {
+          recentList.splice(recentList.indexOf(i), 1);
+          return false;
+        }
+      });
+      // if not already the most recent then push to recentList
+      recentList.push(params);
+      recentList.length <= 10 || recentList.shift();
       localStorage.setItem('recent', JSON.stringify(recentList));
     }
-    recentList = JSON.parse(localStorage.getItem('recent'));
-    recentList.forEach(function(i){
-    	if(i.stop === params.stop) {
-		    recentList.splice(recentList.indexOf(i), 1);
-		    return false;
-      }
-    });
-    // if not already the most recent then push to recentList
-    recentList.push(params);
-    recentList.length <= 10 || recentList.shift();
-    localStorage.setItem('recent', JSON.stringify(recentList));
   }
-}
 
-function getStoredTrips() {
-  if(typeof(Storage) !== 'undefined') {
-    if(localStorage.getItem('recent') !== null) {
-      recentList = JSON.parse(localStorage.getItem('recent'));
-      render('recent', recentList.reverse(), '.info');
-      //event listeners
-      $('#recent a').on('click', function(e) {
-        e.preventDefault();
-        history.pushState(null, null, $(this).data('url'));
-        callRouter(); // getwhatever stop
-	ga('send', 'event', 'recentlist', 'click', 'recent ' + $(this).data('url'));
-      });
+  function getStoredTrips() {
+    if(typeof(Storage) !== 'undefined') {
+      if(localStorage.getItem('recent') !== null) {
+        recentList = JSON.parse(localStorage.getItem('recent'));
+        render('recent', recentList.reverse(), '.info');
+        //event listeners
+        $('#recent a').on('click', function(e) {
+          e.preventDefault();
+          history.pushState(null, null, $(this).data('url'));
+          Backbone.history.checkUrl();
+    ga('send', 'event', 'recentlist', 'click', 'recent ' + $(this).data('url'));
+        });
+      }
     }
   }
-}
 
-function spinner(s) {
-  s === 'start' && $('.spin').addClass('animate');
-  s === 'stop' && $('.spin').removeClass('animate');
-}
+  function spinner(s) {
+    s === 'start' && $('.spin').addClass('animate');
+    s === 'stop' && $('.spin').removeClass('animate');
+  }
 
 //[STOP_ID,"D"I"RECTION_ID,STOP_NAME",LON,LAT,"STATION_NAME","STATION_DESCRIPTIVE_NAME",PARENT_STOP_ID,ADA,Red,Blue,Brn,G,P,Pexp,Y,Pink,Org],
 var trainsArr = [
@@ -686,16 +653,16 @@ var trainsArr = [
 ];
 
 
-/*
-$(window).on('popstate pushstate', function() {
-  callRouter();
+$('a[data-action]').on('click', function(e){
+  var action = $(this).data('action');
+  e.preventDefault();
+  history.pushState(null, null, '/' + action );
+  Backbone.history.checkUrl();
 });
-
-callRouter();
-*/
 
 getStoredTrips();
 
 new Commute.Router();
 Backbone.history.start({pushState: true});
+
 })(jQuery);
