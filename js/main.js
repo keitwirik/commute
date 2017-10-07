@@ -30,63 +30,25 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
       'trains/r/:trainline': 'getTrainStops',
       'trains/r/:trainline/s/:stopId': 'getTrainPrediction'
     },
+
     getRoutes: function() {
-      var request = createRequest(api.routes.getRoutes, {});
 
-      $('.spinner').hide();
-      clearTimeout(timer);
+      var busRoutes = new Commute.Views.ListBusRoutesView();
 
-      $.get(request, function(data){
-        context = $.xml2json(data);
-
-        render('routes', context, '.info');
-
-        $('a.route').on('click', function(e){
-          e.preventDefault();
-          var rt = $(this).attr('data-rt');
-          history.pushState(null, null, '/bus/r/' + rt);
-          Backbone.history.checkUrl();
-        });
-      });
     },
 
     getDirections: function(routeId) {
-      //FIXME: possible for route to hav only one direction
-      // and return an obj instead of an array
-      // This should just get passed over with the single route possible
-      var requestRoute = api.routes.getDirections;
-      var params = {
-        "rt" : routeId
-      };
 
-      var request = createRequest(requestRoute, params);
-      $('.spinner').hide();
-      clearTimeout(timer);
-      $.get(request, function(data){
-        context = $.xml2json(data);
-        context.rt = routeId; //TODO remove this after removing it from template
-        if(context.dir instanceof Array) {
-          context.dirIsArr = true;
-        }
-        render('directions', context, '.info');
+      var busDirections = new Commute.Views.BusDirectionsView(routeId);
 
-        //event listeners
-        $('a.direction').on('click', function(e){
-          e.preventDefault();
-          var direction = $(this).attr('data-dir');
-          history.pushState(null, null, '/bus/r/' + routeId + '/' + direction);
-          Backbone.history.checkUrl();
-        });
-      });
     },
 
     getStops: function(routeId, direction){
-      var requestRoute = api.routes.getStops;
       var params = {
         "rt" : routeId,
         "dir" : direction
       };
-      var request = createRequest(requestRoute, params);
+      var request = createRequest(api.routes.getStops, params);
       $('.spinner').hide();
       clearTimeout(timer);
       $.get(request, function(data){
@@ -114,11 +76,10 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
     },
 
     getPrediction: function(stopId) {
-      var requestRoute = api.routes.getPredictions;
       var params = {
         "stpid" : stopId
       };
-      var request = createRequest(requestRoute, params);
+      var request = createRequest(api.routes.getPredictions, params);
 
       $.get(request, function(data){
         spinner('stop');
@@ -286,6 +247,85 @@ var wtf = {}, context, timer, pathArray, params = {}, recentList = [];
 
   });
 
+
+  Commute.Views.ListBusRoutesView = Backbone.View.extend({
+    el: '.info',
+
+    events: {
+      'click .route': 'navigate'
+    },
+
+    request: createRequest(api.routes.getRoutes, {}),
+
+    initialize: function() {
+      var that = this;
+
+      $('.spinner').hide();
+      clearTimeout(timer);
+
+      $.get(this.request, function(data){
+        that.render(data);
+      });
+
+    },
+
+    render: function(data) {
+      render( 'routes', $.xml2json(data), this.el );
+    },
+
+    navigate: function(e) {
+      e.preventDefault();
+      var rt = $(e.currentTarget).attr('data-rt');
+      CommuteRouter.navigate('/bus/r/' + rt, {trigger: true});
+    }
+
+  });
+
+  Commute.View.BusDirectionsView = Backbone.View.extend({
+    //FIXME: possible for route to hav only one direction
+    // and return an obj instead of an array
+    // This should just get passed over with the single route possible
+    el: '.info',
+
+    params: {
+      "rt" : routeId
+    },
+
+    events: {
+      'click a.direction': 'navigate'
+    },
+
+    request: createRequest(api.routes.getDirections, this.params),
+
+    initialize: function() {
+      var that = this;
+
+      $('.spinner').hide();
+      clearTimeout(timer);
+
+      $.get(this.request, function(data){
+        that.render(data);
+      });
+    },
+
+    render: function(data) {
+      var context = $.xml2json(data);
+      context.rt = routeId; //TODO remove this after removing it from template
+      if(context.dir instanceof Array) {
+        context.dirIsArr = true;
+      }
+      render('directions', context, this.el);
+
+      history.pushState(null, null, '/bus/r/' + routeId + '/' + direction);
+    },
+
+    navigate: function(e) {
+      e.preventDefault();
+      var direction = $(this).attr('data-dir');
+      CommuteRouter.navigate('/bus/r/' + routeId + '/' + direction, {trigger: true});
+    }
+
+  });
 
   function createRequest(requestRoute, params) {
     var request = api.url + requestRoute + '?' + $.param(params);
@@ -662,7 +702,7 @@ $('a[data-action]').on('click', function(e){
 
 getStoredTrips();
 
-new Commute.Router();
+var CommuteRouter = new Commute.Router();
 Backbone.history.start({pushState: true});
 
 })(jQuery);
