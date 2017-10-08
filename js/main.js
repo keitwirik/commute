@@ -43,138 +43,15 @@ var api = {
     },
 
     getPrediction: function(stopId) {
-      var params = {
-        "stpid" : stopId
-      };
-      var request = createRequest(api.routes.getPredictions, params);
-
-      $.get(request, function(data){
-        spinner('stop');
-        context = $.xml2json(data);
-        context.stpid = stopId;
-        //sometimes a single object gets passed back
-        if(context.error){
-          console.log('there was an error ', context);
-        } else {
-          if(context.prd instanceof Array) {
-            context.prdIsArr = true; // template looks for this
-            for(var i = 0; i < context.prd.length; i++) {
-              context.prd[i].prdtm = convertDate(context.prd[i].prdtm);
-            }
-    //        context.prd.forEach(function(en){
-    //          console.log('array, more than one bus ', en.prdtm);
-    //        });
-          } else {
-    //        console.log('not array, only one bus ', context.prd);
-            context.prd.prdtm = convertDate(context.prd.prdtm);
-          }
-        }
-
-        render('prediction', context, '.info');
-
-        timer = setTimeout(function(){
-          getPrediction(stopId);
-          ga('send', 'event', 'autorefresh', 'timer', 'autorefresh bus ' + window.location.pathname);
-        }, 60000);
-        // set timer spinner
-        // clear timer with any a click
-        $('a').on('click', function(){clearTimeout(timer);});
-        $('.spinner.bus .spin').off().on('click', function() {
-          clearTimeout(timer);
-          getPrediction(stopId);
-          ga('send', 'event', 'refresh', 'click', 'refresh bus ' + window.location.pathname);
-        });
-      });
-      $('.spinner.bus').show();
-      spinner('start');
+      new Commute.Views.BusPredictions(stopId);
     },
 
     getTrainlines: function(){
-      context = {
-        line:  [
-          {
-            line_id: 9,
-            line_name: 'Red'
-          },
-          {
-            line_id: 10,
-            line_name: 'Blue'
-          },
-          {
-            line_id: 11,
-            line_name: 'Brown'
-          },
-          {
-            line_id: 12,
-            line_name: 'Green'
-          },
-          {
-            line_id: 13,
-            line_name: 'Purple'
-          },
-          {
-            line_id: 14,
-            line_name: 'Purple Express'
-          },
-          {
-            line_id: 15,
-            line_name: 'Yellow'
-          },
-          {
-            line_id: 16,
-            line_name: 'Pink'
-          },
-          {
-            line_id: 17,
-            line_name: 'Orange'
-          }
-        ]
-      };
-      render('trainlines', context, '.info');
-      //event listeners
-      var thisStop, line;
-      $('a.line').on('click', function(e) {
-        e.preventDefault();
-        line = $(this).data('line');
-        history.pushState(null, null, '/trains/r/' + line);
-        Backbone.history.checkUrl();
-      });
+      new Commute.Views.ListTrainLinesView();
     },
 
-
     getTrainStops: function(trainline) {
-      context = {
-        stoplist: []
-      };
-      var thisStop, thatStop;
-      trainsArr.forEach(function(e) {
-        if(thisStop = e[trainline] === 1) {
-          var thisStop = e[7];
-          if(thisStop !== thatStop) {
-            var tmp = {
-              parent_stop_id: e[7],
-              stop_name: e[6]
-            };
-            context.stoplist.push(tmp);
-          }
-          thatStop = thisStop;
-        }
-      });
-
-      render('trainstops', context, '.info');
-      //event listeners
-      var stop;
-      $('a.stop').on('click', function(e) {
-        var params = {};
-        e.preventDefault();
-        stop = $(this).data('stop');
-        params.stopDesc = $(this).data('desc');
-        params.stop = '/trains/r/' + trainline + '/s/' + stop;
-        params.type = 'train';
-        history.pushState(null, null, '/trains/r/' + trainline + '/s/' + stop );
-        Backbone.history.checkUrl();
-        addStoredTrip(params);
-      });
+      new Commute.Views.TrainStopsView(trainline);
     },
 
     getTrainPrediction: function(trainline, stopId) {
@@ -214,7 +91,6 @@ var api = {
 
   });
 
-
   Commute.Views.ListBusRoutesView = Backbone.View.extend({
     el: '.info',
 
@@ -247,6 +123,51 @@ var api = {
     }
 
   });
+
+  Commute.Views.TrainStopsView = Backbone.View.extend({
+    el: '.info',
+    events: {
+      'click a.stop': 'navigate'
+    },
+    trainline: '',
+    initialize: function(trainline) {
+      var thisStop, thatStop;
+      var context = {
+            stoplist: []
+          };
+      this.trainline = trainline;
+      trainsArr.forEach(function(e) {
+        if(thisStop = e[trainline] === 1) {
+          var thisStop = e[7];
+          if(thisStop !== thatStop) {
+            var tmp = {
+              parent_stop_id: e[7],
+              stop_name: e[6]
+            };
+            context.stoplist.push(tmp);
+          }
+          thatStop = thisStop;
+        }
+      });
+
+      this.render(context);
+    },
+    render: function(context) {
+      render('trainstops', context, this.el);
+    },
+    navigate: function(e) {
+      var stop;
+      var params = {};
+      e.preventDefault();
+      stop = $(e.currentTarget).data('stop');
+      params.stopDesc = $(e.currentTarget).data('desc');
+      params.stop = '/trains/r/' + this.trainline + '/s/' + stop;
+      params.type = 'train';
+      CommuteRouter.navigate('/trains/r/' + this.trainline + '/s/' + stop, {trigger: true});
+      addStoredTrip(params);
+    }
+  });
+
 
   Commute.Views.BusDirectionsView = Backbone.View.extend({
     //FIXME: possible for route to hav only one direction
@@ -330,6 +251,72 @@ var api = {
 
   });
 
+  Commute.Views.BusPredictions = Backbone.View.extend({
+    el: '.info',
+
+    params: {},
+
+    initialize: function(stopId){
+
+      bindSpinner(stopId);
+
+      params = { "stpid" : stopId };
+
+      var that = this;
+
+      var request = createRequest(api.routes.getPredictions, params);
+
+      $.get(request, function(data){
+        spinner('stop');
+        that.render(data);
+      });
+
+    },
+
+    render: function(data) {
+      context = $.xml2json(data);
+      context.stpid = params.stpid;
+      //sometimes a single object gets passed back
+      if(context.error){
+        console.log('there was an error ', context);
+      } else {
+        if(context.prd instanceof Array) {
+          context.prdIsArr = true; // template looks for this
+          for(var i = 0; i < context.prd.length; i++) {
+            context.prd[i].prdtm = convertDate(context.prd[i].prdtm);
+          }
+        } else {
+          context.prd.prdtm = convertDate(context.prd.prdtm);
+        }
+      }
+
+      render('prediction', context, this.el);
+
+      startTimer(params.stpid);
+    }
+  });
+
+  Commute.Views.ListTrainLinesView = Backbone.View.extend({
+    el: '.info',
+    events: {
+      'click a.line': 'navigate'
+    },
+    initialize: function(){
+      this.render();
+    },
+    render: function(){
+      context = {
+        line: trainLines
+      };
+      render('trainlines', context, this.el);
+    },
+    navigate: function(e){
+      e.preventDefault();
+      line = $(e.currentTarget).data('line');
+      CommuteRouter.navigate('/trains/r/' + line, {trigger: true});
+    }
+
+  });
 
   function createRequest(requestRoute, params) {
     var request = api.url + requestRoute + '?' + $.param(params);
@@ -385,6 +372,26 @@ var api = {
         });
       }
     }
+  }
+
+  function startTimer(stopId) {
+    timer = setTimeout(function(){
+      new Commute.Views.BusPredictions(stopId);
+      ga('send', 'event', 'autorefresh', 'timer', 'autorefresh bus ' + window.location.pathname);
+    }, 60000);
+  }
+
+  function bindSpinner(stopId) {
+    $('.spinner.bus').show();
+    spinner('start');
+    // clear timer with any a click
+    $('a').on('click', function(){clearTimeout(timer);});
+
+    $('.spinner.bus .spin').off().on('click', function() {
+      clearTimeout(timer);
+      new Commute.Views.BusPredictions(stopId);
+      ga('send', 'event', 'refresh', 'click', 'refresh bus ' + window.location.pathname);
+    });
   }
 
   function spinner(s) {
@@ -696,6 +703,44 @@ var trainsArr = [
   [30105,"N","Wilson (Howard-bound)",-87.657588,41.964273,"Wilson","Wilson (Red Line)",40540,0,1,0,0,0,0,0,0,0,0]
 ];
 
+var trainLines = [
+    {
+      line_id: 9,
+      line_name: 'Red'
+    },
+    {
+      line_id: 10,
+      line_name: 'Blue'
+    },
+    {
+      line_id: 11,
+      line_name: 'Brown'
+    },
+    {
+      line_id: 12,
+      line_name: 'Green'
+    },
+    {
+      line_id: 13,
+      line_name: 'Purple'
+    },
+    {
+      line_id: 14,
+      line_name: 'Purple Express'
+    },
+    {
+      line_id: 15,
+      line_name: 'Yellow'
+    },
+    {
+      line_id: 16,
+      line_name: 'Pink'
+    },
+    {
+      line_id: 17,
+      line_name: 'Orange'
+    }
+  ];
 
 $('a[data-action]').on('click', function(e){
   var action = $(this).data('action');
