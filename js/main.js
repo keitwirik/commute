@@ -55,39 +55,8 @@ var api = {
     },
 
     getTrainPrediction: function(trainline, stopId) {
-      var requestRoute = api.routes.getTrainpredictions;
-      var params = {
-        mapid: stopId,
-        max: 10
-      };
-      var request = createRequest(requestRoute, params);
-      $.get(request, function(data){
-        spinner('stop');
-        context = $.xml2json(data);
-        for(var i = 0; i < context.eta.length; i++) {
-              context.eta[i].arrD = convertDate(context.eta[i].arrT);
-        }
-        render('trainpredictions', context, '.info');
-
-        // refresh results every minute
-        // timer seems to need to be in global
-        // scope to be clearable
-        timer = setTimeout(function(){
-          getTrainPrediction(params);
-          ga('send', 'event', 'autorefresh', 'timer', 'autorefresh train ' + window.location.pathname);
-        }, 60000);
-        // set timer spinner
-        // clear timer with any a click
-        $('a').on('click', function(){clearTimeout(timer);});
-      });
-      $('.spinner.train').show();
-      $('.spinner.train .spin').off().on('click', function() {
-        clearTimeout(timer);
-        getTrainPrediction(params);
-        ga('send', 'event', 'refresh', 'click', 'refresh train ' + window.location.pathname);
-      });
-      spinner('start');
-    }
+      new Commute.Views.TrainPredictionView(trainline, stopId);
+    },
 
   });
 
@@ -292,8 +261,50 @@ var api = {
 
       render('prediction', context, this.el);
 
-      startTimer(params.stpid);
+      startTimer(params);
     }
+  });
+
+  Commute.Views.TrainPredictionView = Backbone.View.extend({
+    el: '.info',
+    initialize: function(trainline, stopId){
+
+      bindSpinner(stopId, trainline);
+
+      var requestRoute = api.routes.getTrainpredictions;
+      var params = {
+        mapid: stopId,
+        max: 10
+      };
+      var request = createRequest(requestRoute, params);
+      var that = this;
+      $.get(request, function(data){
+        spinner('stop');
+        that.render(data);
+      });
+    },
+    render: function(data){
+      context = $.xml2json(data);
+      for(var i = 0; i < context.eta.length; i++) {
+            context.eta[i].arrD = convertDate(context.eta[i].arrT);
+      }
+      render('trainpredictions', context, '.info');
+
+      startTimer(params);
+
+      // set timer spinner
+      // clear timer with any a click
+      $('a').on('click', function(){clearTimeout(timer);});
+
+    $('.spinner.train').show();
+    $('.spinner.train .spin').off().on('click', function() {
+      clearTimeout(timer);
+      new Commute.Views.TrainPredictionView(params);
+      ga('send', 'event', 'refresh', 'click', 'refresh train ' + window.location.pathname);
+    });
+    spinner('start');
+    }
+
   });
 
   Commute.Views.ListTrainLinesView = Backbone.View.extend({
@@ -374,23 +385,42 @@ var api = {
     }
   }
 
-  function startTimer(stopId) {
+  function startTimer(params) {
+    var stopId = params.stopId;
+    var type = 'bus';
+    if(params.trainline){
+      var trainline = params.trainline;
+      type = 'train';
+    }
     timer = setTimeout(function(){
-      new Commute.Views.BusPredictions(stopId);
-      ga('send', 'event', 'autorefresh', 'timer', 'autorefresh bus ' + window.location.pathname);
+      if(type === 'bus'){
+        new Commute.Views.BusPredictions(stopId);
+      } else {
+        new Commute.Views.TrainStopsView(trainline, stopId);
+      }
+        ga('send', 'event', 'autorefresh', 'timer', 'autorefresh ' + type + ' ' + window.location.pathname);
     }, 60000);
+
   }
 
-  function bindSpinner(stopId) {
-    $('.spinner.bus').show();
+  function bindSpinner(stopId, trainline) {
+    var type = 'bus';
+    if(trainline) {
+      type = 'train';
+    }
+    $('.spinner.' + type ).show();
     spinner('start');
     // clear timer with any a click
     $('a').on('click', function(){clearTimeout(timer);});
 
-    $('.spinner.bus .spin').off().on('click', function() {
+    $('.spinner.' + type + ' .spin').off().on('click', function() {
       clearTimeout(timer);
-      new Commute.Views.BusPredictions(stopId);
-      ga('send', 'event', 'refresh', 'click', 'refresh bus ' + window.location.pathname);
+      if(type === 'bus'){
+        new Commute.Views.BusPredictions(stopId);
+      } else {
+        new Commute.Views.TrainPredictionView(trainline, stopId);
+      }
+      ga('send', 'event', 'refresh', 'click', 'refresh ' + type + ' ' + window.location.pathname);
     });
   }
 
