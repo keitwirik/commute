@@ -9,7 +9,7 @@ var api = {
     getTrainpredictions: 't/ttarrivals/'
   }
 },
-    wtf = {}, context, timer, pathArray, params = {}, recentList = [];
+context, timer, params = {}, recentList = [];
 
 (function($){
 
@@ -279,7 +279,7 @@ var api = {
       this.otherParams = {
         stopId: stopId,
         trainline: trainline
-      }
+      };
       var request = createRequest(requestRoute, this.params);
       var that = this;
       $.get(request, function(data){
