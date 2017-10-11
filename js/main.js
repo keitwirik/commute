@@ -272,11 +272,15 @@ var api = {
       bindSpinner(stopId, trainline);
 
       var requestRoute = api.routes.getTrainpredictions;
-      var params = {
+      this.params = {
         mapid: stopId,
         max: 10
       };
-      var request = createRequest(requestRoute, params);
+      this.otherParams = {
+        stopId: stopId,
+        trainline: trainline
+      }
+      var request = createRequest(requestRoute, this.params);
       var that = this;
       $.get(request, function(data){
         spinner('stop');
@@ -290,19 +294,8 @@ var api = {
       }
       render('trainpredictions', context, '.info');
 
-      startTimer(params);
+      startTimer(this.otherParams);
 
-      // set timer spinner
-      // clear timer with any a click
-      $('a').on('click', function(){clearTimeout(timer);});
-
-    $('.spinner.train').show();
-    $('.spinner.train .spin').off().on('click', function() {
-      clearTimeout(timer);
-      new Commute.Views.TrainPredictionView(params);
-      ga('send', 'event', 'refresh', 'click', 'refresh train ' + window.location.pathname);
-    });
-    spinner('start');
     }
 
   });
