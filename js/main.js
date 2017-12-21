@@ -772,7 +772,7 @@ context, timer, params = {}, recentList = [];
   $('a[data-action]').on('click', function(e){
     var action = $(this).data('action');
     e.preventDefault();
-    CommuteRouter.navigate(null, null, '/' + action, {trigger: true});
+    CommuteRouter.navigate( '/' + action, {trigger: true});
   });
 
 })(jQuery);
