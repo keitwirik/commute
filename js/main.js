@@ -355,7 +355,7 @@ context, timer, params = {}, recentList = [];
         }
       });
       // if not already the most recent then push to recentList
-      recentList.push(params);
+      recentList.push({stop: params.stop, stopDesc: params.stopDesc});
       recentList.length <= 10 || recentList.shift();
       localStorage.setItem('recent', JSON.stringify(recentList));
     }
