@@ -276,7 +276,7 @@ context, timer, params = {}, recentList = [];
         max: 10
       };
       this.otherParams = {
-        stopId: stopId,
+        stpid: stopId,
         trainline: trainline
       };
       var request = createRequest(requestRoute, this.params);
@@ -390,7 +390,7 @@ context, timer, params = {}, recentList = [];
       if(type === 'bus'){
         new Commute.Views.BusPredictions(stopId);
       } else {
-        new Commute.Views.TrainStopsView(trainline, stopId);
+        new Commute.Views.TrainPredictionView(trainline, stopId);
       }
         ga('send', 'event', 'autorefresh', 'timer', 'autorefresh ' + type + ' ' + window.location.pathname);
     }, 60000);
