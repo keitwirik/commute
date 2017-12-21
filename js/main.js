@@ -378,11 +378,13 @@ context, timer, params = {}, recentList = [];
   }
 
   function startTimer(params) {
-    var stopId = params.stopId;
-    var type = 'bus';
+    var stopId = params.stpid;
+    var type = '';
     if(params.trainline){
       var trainline = params.trainline;
       type = 'train';
+    } else {
+      type = 'bus';
     }
     timer = setTimeout(function(){
       if(type === 'bus'){
@@ -396,9 +398,11 @@ context, timer, params = {}, recentList = [];
   }
 
   function bindSpinner(stopId, trainline) {
-    var type = 'bus';
+    var type = '';
     if(trainline) {
       type = 'train';
+    } else {
+      type = 'bus';
     }
     $('.spinner.' + type ).show();
     spinner('start');
