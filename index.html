@@ -65,7 +65,7 @@
     <script src="/js/main.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('js/vendor/service-worker.js').then(function(registration) {
+        navigator.serviceWorker.register('/js/vendor/service-worker.js').then(function(registration) {
           // Registration was successful
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }).catch(function(err) {
