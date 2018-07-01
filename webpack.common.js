@@ -5,10 +5,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
-   app: './src/app.js',
-   templates: './src/templates.js',
-   vendor: './src/jquery.xml2json.min.js',
-   serviceWorker: './src/service-worker.js'
+    app: './src/app.js',
+    templates: './src/templates.js',
+    vendor: './src/jquery.xml2json.min.js',
+    serviceWorker: './src/service-worker.js'
   },
   module: {
     rules: [
@@ -23,6 +23,10 @@ module.exports = {
           },
           'css-loader'
         ]
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ['file-loader']
       }
     ]
   },
@@ -41,5 +45,5 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist')
-  },
+  }
 };
