@@ -7,8 +7,8 @@ module.exports = {
   entry: {
    app: './src/app.js',
    templates: './src/templates.js',
-   vendor: '.src/jquery.xml2json.min.js',
-   serviceWorker: '.src/service-worker.js'
+   vendor: './src/jquery.xml2json.min.js',
+   serviceWorker: './src/service-worker.js'
   },
   module: {
     rules: [
