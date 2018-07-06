@@ -10,7 +10,7 @@ module.exports = merge(common, {
     historyApiFallback: true,
 
     before: function(app) {
-      app.get('/v/*', function(req, res) {
+      app.get('/v2/*', function(req, res) {
         request('http://dev.cta.keit.io/' + req.path).pipe(res);
       });
     }

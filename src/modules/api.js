@@ -1,5 +1,5 @@
 const api = {
-  url: '/v/',
+  url: '/v2/',
   routes: {
     getRoutes: 'getroutes/',
     getDirections: 'getdirections/',
