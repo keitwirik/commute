@@ -40,10 +40,11 @@ const matchUrl = url => {
 };
 
 Commute.navigate = page => {
-  console.log('next page', page);
+  console.log('navigating', page);
   history.pushState(null, null, page);
   page = page.replace(/^\//, '').replace(/\/$/, ''); // shave off slashs
   const next = matchUrl(page);
+  console.log('next', next);
   if (next.function === 'home') {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild);
@@ -51,17 +52,19 @@ Commute.navigate = page => {
     // show recent trips
     console.log('home page');
   }
-  if (next.function === 'bus') {
+  if (next.function === 'busRoutes') {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild);
     }
+    console.log('bus routes dispatch');
     busRoutes();
   }
-  if (next.function === 'busdirection' && next.props[1] && next.props[2]) {
+  if (next.function === 'busDirections' && next.props[1]) {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild);
     }
-    busdirection(next.props);
+    console.log('bus directions dispatch', next.props[1]);
+    busDirections(next.props[1]);
   }
 };
 

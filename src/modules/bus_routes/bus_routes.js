@@ -6,6 +6,7 @@ import createRequest from '../../modules/createRequest';
 var timer;
 
 function busRoutes() {
+  console.log('busroutes');
   const el = document.createElement('div');
   const request = createRequest(api.routes.getRoutes, {});
 
@@ -35,15 +36,20 @@ function busRoutes() {
 
       el.innerHTML = template;
 
-      var links = el.querySelectorAll('a');
-      [...links].forEach(link =>
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          history.pushState(null, null, link.href);
-          state();
-          console.log('clicked link', link);
-        })
-      );
+      // events
+      const addEvents = el => {
+        var links = el.querySelectorAll('a');
+        [...links].forEach(link =>
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            history.pushState(null, null, link.href);
+            state();
+            console.log('clicked link', link);
+          })
+        );
+      };
+
+      addEvents(el);
 
       return document.querySelector('.info').appendChild(el);
     });

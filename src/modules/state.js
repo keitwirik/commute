@@ -1,7 +1,7 @@
 import Commute from '../modules/commuteRouter';
 
 window.addEventListener('popstate', function(e) {
-  state();
+  //state();
 });
 
 function state() {

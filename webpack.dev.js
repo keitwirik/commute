@@ -11,7 +11,13 @@ module.exports = merge(common, {
 
     before: function(app) {
       app.get('/v2/*', function(req, res) {
-        request('http://dev.cta.keit.io/' + req.path).pipe(res);
+        // hack to get devserver to pass query string
+        let queryString = '?';
+        for (let q in req.query) {
+          queryString += q + '=' + req.query[q] + '&';
+        }
+        queryString.slice(0, -1);
+        request('http://dev.cta.keit.io/' + req.path + queryString).pipe(res);
       });
     }
   }

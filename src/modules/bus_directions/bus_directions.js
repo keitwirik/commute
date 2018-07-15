@@ -11,23 +11,25 @@ function busDirections(routeId) {
 
   fetch(request)
     .then(resp => resp.json())
-    .then(function(data) {
-      const directions = data['bustime-response'].directions;
-
+    .then(data => {
+      const directions = data['bustime-response'].directions.map(bus => ({
+        dir: bus.dir,
+        rt: routeId
+      }));
       const template = `
       <header>
-        <h3>Directions</h3>
+        <h3>${routeId} Directions</h3>
       </header>
       <ul>
         ${directions
           .map(
-            bus => `
+            direction => `
               <li>
                 <a
                 class="direction"
-                href="/bus/${routeID}/${bus.dir}"
-                data-dir="${bus.dir}"
-                data-rt="${routeId}">${bus.dir}</a>
+                href="/bus/${direction.rt}/${direction.dir}"
+                data-dir="${direction.dir}"
+                data-rt="${direction.rt}">${direction.dir}</a>
               </li>
             `
           )
@@ -37,6 +39,7 @@ function busDirections(routeId) {
 
       el.innerHTML = template;
 
+      // events
       var links = el.querySelectorAll('a');
       [...links].forEach(link =>
         link.addEventListener('click', function(e) {
