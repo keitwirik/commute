@@ -1,5 +1,6 @@
 import busRoutes from './bus_routes/bus_routes';
 import busDirections from './bus_directions/bus_directions';
+import busStops from './bus_stops/bus_stops';
 
 var parent = document.querySelector('.info');
 
@@ -16,7 +17,8 @@ const routes = {
   home: /^$/,
   busRoutes: /^bus$/,
   busDirections: /^bus\/(\w+)$/,
-  busStopPredictions: /^bus\/(\w+)\/(\w+)$/,
+  busStops: /^bus\/(\w+)\/(\w+)$/,
+  busStopPredictions: /^bus\/s\/(\w+)$/,
   trainLines: /^trains$/,
   trainStops: /^trains\/(\w+)$/,
   trainStopPredictions: /^trains\/(\w+)\/(\w+)$/
@@ -65,6 +67,13 @@ Commute.navigate = page => {
     }
     console.log('bus directions dispatch', next.props[1]);
     busDirections(next.props[1]);
+  }
+  if (next.function === 'busStops' && next.props) {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    console.log('busStops dispatch', next.props);
+    // busStops(next.props);
   }
 };
 

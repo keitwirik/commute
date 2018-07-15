@@ -2,6 +2,7 @@ import api from '../../modules/api';
 import startTimer from '../../modules/startTimer';
 import state from '../../modules/state';
 import createRequest from '../../modules/createRequest';
+import addEventListeners from '../../modules/addEventListeners';
 
 var timer;
 
@@ -36,20 +37,7 @@ function busRoutes() {
 
       el.innerHTML = template;
 
-      // events
-      const addEvents = el => {
-        var links = el.querySelectorAll('a');
-        [...links].forEach(link =>
-          link.addEventListener('click', function(e) {
-            e.preventDefault();
-            history.pushState(null, null, link.href);
-            state();
-            console.log('clicked link', link);
-          })
-        );
-      };
-
-      addEvents(el);
+      addEventListeners(el);
 
       return document.querySelector('.info').appendChild(el);
     });
