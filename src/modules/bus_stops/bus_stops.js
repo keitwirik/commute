@@ -6,31 +6,31 @@ import addEventListeners from '../../modules/addEventListeners';
 
 var timer;
 
-function busDirections(routeId) {
+function busStops(props) {
+  console.log('busStops props', props);
   const el = document.createElement('div');
-  const request = createRequest(api.routes.getStops, { rt: routeId });
+  const request = createRequest(api.routes.getStops, {
+    rt: props[1],
+    dir: props[2]
+  });
 
   fetch(request)
     .then(resp => resp.json())
     .then(data => {
-      const directions = data['bustime-response'].directions.map(bus => ({
-        dir: bus.dir,
-        rt: routeId
-      }));
+      const stops = data['bustime-response'].stops;
       const template = `
       <header>
-        <h3>${routeId} Directions</h3>
+        <h3>Stops</h3>
       </header>
       <ul>
-        ${directions
+        ${stops
           .map(
-            direction => `
+            stop => `
               <li>
                 <a
                 class="direction"
-                href="/bus/${direction.rt}/${direction.dir}"
-                data-dir="${direction.dir}"
-                data-rt="${direction.rt}">${direction.dir}</a>
+                href="/bus/s/${stop.stpid}"
+                data-stop="${stop.stpid}">${stop.stpnm}</a>
               </li>
             `
           )
@@ -46,8 +46,7 @@ function busDirections(routeId) {
     });
 }
 
-export default busDirections;
-
+export default busStops;
 
 // Commute.Views.BusStopsView = Backbone.View.extend({
 //   el: '.info',
