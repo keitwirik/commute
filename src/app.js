@@ -17,10 +17,20 @@ var context,
   recentList = [];
 
 // header navigation
-var busNav = document.querySelector('[data-action="bus"]');
+const indexNav = document.querySelector('.navbar-brand');
+indexNav.addEventListener('click', function(e) {
+  e.preventDefault();
+  Commute.navigate('/');
+});
+const busNav = document.querySelector('[data-action="bus"]');
 busNav.addEventListener('click', function(e) {
   e.preventDefault();
   Commute.navigate('/bus');
+});
+const trainNav = document.querySelector('[data-action="train"]');
+trainNav.addEventListener('click', function(e) {
+  e.preventDefault();
+  Commute.navigate('/train');
 });
 
 (function() {
