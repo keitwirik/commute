@@ -2,6 +2,7 @@ import busRoutes from './bus_routes/bus_routes';
 import busDirections from './bus_directions/bus_directions';
 import busStops from './bus_stops/bus_stops';
 import busStopPredictions from './bus_predictions/bus_predictions';
+import trainLines from './train_lines/train_lines';
 
 var parent = document.querySelector('.info');
 
@@ -20,9 +21,9 @@ const routes = {
   busDirections: /^bus\/(\w+)$/,
   busStops: /^bus\/(?!s)(\w+)\/(\w+)$/,
   busStopPredictions: /^bus\/s\/(\w+)$/,
-  trainLines: /^trains$/,
-  trainStops: /^trains\/(\w+)$/,
-  trainStopPredictions: /^trains\/(\w+)\/(\w+)$/
+  trainLines: /^train$/,
+  trainStops: /^train\/(\w+)$/,
+  trainStopPredictions: /^train\/(\w+)\/(\w+)$/
 };
 
 const matchUrl = url => {
@@ -82,6 +83,20 @@ Commute.navigate = page => {
     }
     console.log('busStopPredictions dispatch', next.props);
     busStopPredictions(next.props);
+  }
+  if (next.function === 'trainLines') {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    console.log('train lines dispatch');
+    trainLines();
+  }
+  if (next.function === 'trainStops') {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    console.log('train stops dispatch');
+    trainStops();
   }
 };
 

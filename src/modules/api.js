@@ -6,6 +6,9 @@ const api = {
     getStops: 'getstops/',
     getPredictions: 'getpredictions/',
     getTrainpredictions: 't/ttarrivals/'
+  },
+  other: {
+    getTrainStopData: 'https://data.cityofchicago.org/resource/8mj8-j3c4.json'
   }
 };
 
