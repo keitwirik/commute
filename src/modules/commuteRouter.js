@@ -3,6 +3,8 @@ import busDirections from './bus_directions/bus_directions';
 import busStops from './bus_stops/bus_stops';
 import busStopPredictions from './bus_predictions/bus_predictions';
 import trainLines from './train_lines/train_lines';
+import trainStops from './train_stops/train_stops';
+import trainStopPredictions from './train_stop_predictions/train_stop_predictions';
 
 var parent = document.querySelector('.info');
 
@@ -97,6 +99,13 @@ Commute.navigate = page => {
     }
     console.log('train stops dispatch');
     trainStops();
+  }
+  if (next.function === 'trainStopPredictions') {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    console.log('train stop predictions dispatch');
+    trainStopPredictions(next.props);
   }
 };
 

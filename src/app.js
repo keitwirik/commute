@@ -9,7 +9,7 @@ import createRequest from './modules/createRequest';
 import startTimer from './modules/startTimer';
 import Commute from './modules/commuteRouter';
 //import ListBusRoutesView from './modules/bus_routes/bus_routes';
-import TrainStopsView from './modules/trainstops/trainStops';
+// import TrainStopsView from './modules/trainstops/trainStops';
 
 var context,
   timer,

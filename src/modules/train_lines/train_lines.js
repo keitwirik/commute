@@ -58,9 +58,11 @@ function trainLines() {
       .map(
         train => `
           <li>
-            <a class="route" href="/train/${train.line_id}" data-rt="${
-          train.line_ed
-        }">${train.line_name} Line</a>
+            <a
+              class="route"
+              href="/train/${train.line_id}"
+              data-rt="${train.line_ed}">
+              ${train.line_name} Line</a>
           </li>
         `
       )
