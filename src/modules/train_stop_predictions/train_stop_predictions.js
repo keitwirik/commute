@@ -29,14 +29,14 @@ function trainStopPredictions(props) {
   const request = createRequest(api.routes.getTrainpredictions, {
     mapid: props[2]
   });
-  localStorageManager
-    .getItem('trainStopPredictions', request)
-    .then(function(data) {
+
+  fetch(request)
+    .then(resp => resp.json())
+    .then(data => {
       const mapId = location.pathname.split('/')[2];
 
       const arrivals = data.ctatt.eta;
       const apiTime = new Date(data.ctatt.tmst);
-      console.log('apiTime', apiTime);
 
       console.log(arrivals);
 
@@ -63,7 +63,7 @@ function trainStopPredictions(props) {
             )
             .join('')}
         </ul>
-        `;
+      `;
 
       el.innerHTML = template;
 
