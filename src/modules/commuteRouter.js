@@ -5,6 +5,7 @@ import busStopPredictions from './bus_predictions/bus_predictions';
 import trainLines from './train_lines/train_lines';
 import trainStops from './train_stops/train_stops';
 import trainStopPredictions from './train_stop_predictions/train_stop_predictions';
+import trainFollow from './train_follow/train_follow';
 
 var parent = document.querySelector('.info');
 
@@ -24,8 +25,9 @@ const routes = {
   busStops: /^bus\/(?!s)(\w+)\/(\w+)$/,
   busStopPredictions: /^bus\/s\/(\w+)$/,
   trainLines: /^train$/,
-  trainStops: /^train\/(\w+)$/,
-  trainStopPredictions: /^train\/(\w+)\/(\w+)$/
+  trainStops: /^train\/(?!f)(\w+)$/,
+  trainStopPredictions: /^train\/(?!f)(\w+)\/(\w+)$/,
+  trainFollow: /^train\/f\/(\w+)$/
 };
 
 const matchUrl = url => {
@@ -106,6 +108,13 @@ Commute.navigate = page => {
     }
     console.log('train stop predictions dispatch');
     trainStopPredictions(next.props);
+  }
+  if (next.function === 'trainFollow') {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    console.log('train follow dispatch', next.props);
+    trainFollow(next.props);
   }
 };
 

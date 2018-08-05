@@ -22,18 +22,22 @@ function arrivalTimeDisplay(arrival, apiTime) {
   return display;
 }
 
-function trainStopPredictions(props) {
-  console.log('trainStopPredictions', props);
+function trainFollow(props) {
+  console.log('trainFollow', props);
   const el = document.createElement('div');
 
-  const request = createRequest(api.routes.getTrainpredictions, {
-    mapid: props[2]
+  const request = createRequest(api.routes.getTrainFollow, {
+    runnumber: props[1]
   });
 
   fetch(request)
     .then(resp => resp.json())
     .then(data => {
-      const mapId = location.pathname.split('/')[2];
+      console.log('err', data.ctatt.errCd, data.ctatt.errCd === '502');
+      if (data.ctatt.errCd === '502') {
+        el.innerHTML = `<header><h3>${data.ctatt.errNm}</h3></header>`;
+        return document.querySelector('.info').appendChild(el);
+      }
 
       const arrivals = data.ctatt.eta;
       const apiTime = new Date(data.ctatt.tmst);
@@ -42,36 +46,35 @@ function trainStopPredictions(props) {
 
       const template = `
         <header>
-          <h3>${arrivals[0].staNm} Arrivals</h3>
+          <h3>
+          ${arrivals[0].rt} Run #${arrivals[0].rn} Toward ${arrivals[0].destNm}
+          </h3>
         </header>
         <ul class="trains">
           ${arrivals
             .map(
               arrival => `
-              ${
-                arrival.isSch === '0'
-                  ? `
                 <li class="${arrival.rt}">
                   <a
                     class="route"
-                    href="/train/f/${arrival.rn}"
-                    data-rt="${arrival.rn}">
-                    <div>${arrival.stpDe}</div>
+                    href="/train/s/${arrival.staId}"
+                    data-rt="${arrival.rt}">
+                    <div>
+                      ${
+                        arrival.staNm === arrival.destNm
+                          ? `
+                        ${arrival.staNm}
+                        `
+                          : `
+                        ${arrival.staNm} toward ${arrival.destNm}
+                        `
+                      }
+                    </div>
                     <div>
                     ${arrivalTimeDisplay(arrival, apiTime)}
                     </div>
                   </a>
                 </li>
-                `
-                  : `
-                <li class="${arrival.rt}">
-                  <div>${arrival.stpDe}</div>
-                  <div>
-                  ${arrivalTimeDisplay(arrival, apiTime)}
-                  </div>
-                </li>
-                `
-              }
               `
             )
             .join('')}
@@ -86,4 +89,4 @@ function trainStopPredictions(props) {
     });
 }
 
-export default trainStopPredictions;
+export default trainFollow;
