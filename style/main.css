@@ -1,5 +1,4 @@
 body {
-  background: #333;
   color: white;
   font-family: 'Ubuntu', sans-serif;
   background: linear-gradient(
@@ -70,9 +69,7 @@ h3 {
 .info a,
 .predictions div {
   display: block;
-  padding: 10px;
   padding: 0.5rem 1rem;
-  font-size: 24px;
   font-size: 2rem;
   line-height: 1.5;
   font-weight: 300;
@@ -92,7 +89,6 @@ h3 {
 }
 
 .sm {
-  font-size: 13px;
   font-size: 1.5rem;
   position: relative;
   display: inline-block;
@@ -233,7 +229,6 @@ div.Y {
 .spinner .spin {
   cursor: pointer;
   display: inline-block;
-  font-size: 30px;
   font-size: 3rem;
   color: #aaa;
   margin: 7px 17px 0 0;
