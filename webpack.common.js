@@ -6,8 +6,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   entry: {
     app: './src/app.js',
-    templates: './src/templates.js',
-    vendor: './src/jquery.xml2json.min.js',
     serviceWorker: './src/service-worker.js'
   },
   module: {
@@ -27,6 +25,17 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: ['file-loader']
+      },
+      {
+        test: /\.(woff|woff2)$/,
+        // include: [path.resolve(__dirname, 'fonts')],
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'fonts/'
+          }
+        }
       }
     ]
   },
@@ -35,7 +44,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html',
       filename: './index.html',
-      title: 'Commute: a CTA bus and train tracking app wp'
+      title: 'Commute: a CTA bus and train tracking app'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
