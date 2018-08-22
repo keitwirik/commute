@@ -1,8 +1,18 @@
 import api from './api';
 
-function createRequest(requestRoute, params) {
-  var request = api.url + requestRoute + '?' + $.param(params);
-  return request;
+function createRequest(route, params) {
+  return (
+    api.url +
+    route +
+    '?' +
+    Object.keys(params)
+      .map(value => {
+        return (
+          encodeURIComponent(value) + '=' + encodeURIComponent(params[value])
+        );
+      })
+      .join('&')
+  );
 }
 
 export default createRequest;
