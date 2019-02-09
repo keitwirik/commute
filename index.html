@@ -4,46 +4,81 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>Commute: a CTA bus and train tracking app</title>
-        <meta name="description" content="">
+        <meta name="description" content="A CTA bus and train tracking app">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/main.min.css">
-        <link href='https://fonts.googleapis.com/css?family=Ubuntu:300,400,500' rel='stylesheet' type='text/css'>
         <link rel="manifest" href="/manifest.json">
+        <style type="text/css">
+          /* ubuntu-300 - latin */
+          @font-face {
+            font-family: 'Ubuntu';
+            font-style: normal;
+            font-display: fallback;
+            font-weight: 300;
+            src: local('Ubuntu Light'), local('Ubuntu-Light'),
+                 url('../fonts/ubuntu-v12-latin-300.woff2') format('woff2'),
+                 url('../fonts/ubuntu-v12-latin-300.woff') format('woff');
+          }
+
+          /* ubuntu-regular - latin */
+          @font-face {
+            font-family: 'Ubuntu';
+            font-style: normal;
+            font-display: fallback;
+            font-weight: 400;
+            src: local('Ubuntu Regular'), local('Ubuntu-Regular'),
+                 url('../fonts/ubuntu-v12-latin-regular.woff2') format('woff2'),
+                 url('../fonts/ubuntu-v12-latin-regular.woff') format('woff');
+          }
+
+          /* ubuntu-500 - latin */
+          @font-face {
+            font-family: 'Ubuntu';
+            font-style: normal;
+            font-display: fallback;
+            font-weight: 500;
+            src: local('Ubuntu Medium'), local('Ubuntu-Medium'),
+                 url('../fonts/ubuntu-v12-latin-500.woff2') format('woff2'),
+                 url('../fonts/ubuntu-v12-latin-500.woff') format('woff');
+          }
+      </style>
     </head>
     <body>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-    <div class="navbar navbar-inverse" role="navigation">
-      <div class="fluid-container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/" title="CTA Public Transit Tracker">Commute</a>
-        </div>
+    <header>
+      <div class="navbar navbar-inverse" role="navigation">
+        <div class="fluid-container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/" title="CTA Public Transit Tracker">Commute</a>
+         </div>
 
-        <div class="navbar-collapse">
-          <ul class="nav navbar-nav" id="mode">
-            <li><a href="/bus" data-action="bus">Buses</a></li>
-            <li><a href="/trains" data-action="trains">the El (trains)</a></li>
-            <!--<li><a href="#reload" data-action="reload">Reload</a></li>-->
-            <!-- <li><a href="/bookmarks">Bookmarks</a></li>
-            <li><a href="/trips">Trips</a></li> -->
-          </ul>
-          <div class="navbar-nav navbar-right spinner bus">
-            <span class="glyphicon glyphicon-refresh spin"></span>
+         <div class="navbar-collapse">
+            <ul class="nav navbar-nav" id="mode">
+              <li><a href="/bus" data-action="bus">Buses</a></li>
+              <li><a href="/trains" data-action="trains">the El (trains)</a></li>
+             <!--<li><a href="#reload" data-action="reload">Reload</a></li>-->
+             <!-- <li><a href="/bookmarks">Bookmarks</a></li>
+             <li><a href="/trips">Trips</a></li> -->
+           </ul>
+           <div class="navbar-nav navbar-right spinner bus">
+             <span class="glyphicon glyphicon-refresh spin"></span>
+           </div>
+           <div class="navbar-nav navbar-right spinner train">
+              <span class="glyphicon glyphicon-refresh spin"></span>
+           </div>
           </div>
-          <div class="navbar-nav navbar-right spinner train">
-            <span class="glyphicon glyphicon-refresh spin"></span>
-          </div>
-        </div>
-      </div>
-    </div>
+       </div>
+     </div>
+   </header>
 
-    <div class="fluid-container">
+    <main class="fluid-container">
       <div class="info">
       </div>
-    </div>
+    </main>
 
     <div class="fluid-container">
       <footer>
