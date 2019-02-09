@@ -9,6 +9,7 @@
         <title>Commute: a CTA bus and train tracking app</title>
         <meta name="description" content="A CTA bus and train tracking app">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#222222"/>
 
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
@@ -100,7 +101,7 @@
     <script src="/js/main.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/js/vendor/service-worker.js').then(function(registration) {
+        navigator.serviceWorker.register('service-worker.js').then(function(registration) {
           // Registration was successful
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }).catch(function(err) {
