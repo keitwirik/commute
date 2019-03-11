@@ -1,12 +1,12 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: {
-    app: './src/app.js',
-    serviceWorker: './src/service-worker.js'
+    app: "./src/app.js",
+    serviceWorker: "./src/service-worker.js"
   },
   module: {
     rules: [
@@ -16,44 +16,50 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: '../'
+              publicPath: "../"
             }
           },
-          'css-loader'
+          "css-loader"
         ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader']
+        use: {
+          loader: "file-loader",
+          options: {
+            name: "[name].[ext]",
+            outputPath: "img/"
+          }
+        }
       },
       {
         test: /\.(woff|woff2)$/,
         // include: [path.resolve(__dirname, 'fonts')],
         use: {
-          loader: 'file-loader',
+          loader: "file-loader",
           options: {
-            name: '[name].[ext]',
-            outputPath: 'fonts/'
+            name: "[name].[ext]",
+            outputPath: "fonts/"
           }
         }
       }
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin(["dist"]),
     new HtmlWebpackPlugin({
-      template: './src/index.html',
-      filename: './index.html',
-      title: 'Commute: a CTA bus and train tracking app'
+      template: "./src/index.html",
+      filename: "./index.html",
+      title: "Commute: a CTA bus and train tracking app"
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
+      filename: "[name].css",
+      chunkFilename: "[id].css"
     })
   ],
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/'
+    filename: "[name].bundle.js",
+    path: path.resolve(__dirname, "dist"),
+    publicPath: "/"
   }
 };

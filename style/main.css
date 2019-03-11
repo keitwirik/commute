@@ -1,13 +1,44 @@
+:root {
+  --color-main-bg: #333;
+  --font-family-main: "Ubuntu", sans-serif;
+  --color-train-Brn: #62361b;
+  --color-train-Red: #c60c30;
+  --color-train-Blue: #00a1de;
+  --color-train-G: #009b3a;
+  --color-train-Org: #f9461c;
+  --color-train-P: #522398;
+  --color-train-Pink: #e27ea6;
+  --color-train-Y: #f9e300;
+
+  font-size: 62.5%;
+}
+:root body {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+html {
+  height: 100%;
+}
+
 body {
   color: white;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: var(--font-family-main);
   background: linear-gradient(
       to bottom,
       rgba(50, 50, 50, 0.6) 0,
       rgba(0, 0, 0, 0.8) 100%
     ),
     url(../src/bg_sm.jpg) no-repeat center / cover;
-  margin-bottom: 40px;
+  padding-top: 50px;
 }
 
 @media (min-width: 800px) {
@@ -30,28 +61,38 @@ a:focus {
 }
 
 header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #222;
-  overflow: hidden;
   border-bottom: 1px solid #111;
-  padding-left: 10px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.main-header {
+  position: fixed;
+  top: 0;
+}
+nav a {
+  display: inline-block;
+  padding: 15px 20px;
+}
+
+nav a:hover {
+  color: #111;
+  background: #aaa;
+}
+
+.logo {
+  background: url(../src/icon60x60.png) no-repeat 2px 0 / contain;
+  width: 60px;
 }
 
 h3 {
   color: #aaa;
   font-weight: 300;
   margin-top: 10px;
-}
-
-.navbar {
-  margin-bottom: 0;
-}
-
-.navbar-inverse {
-  background-image: linear-gradient(
-    to bottom,
-    rgba(50, 50, 50, 0.1) 0,
-    rgba(0, 0, 0, 0.2) 100%
-  );
 }
 
 .info ul {
@@ -78,10 +119,6 @@ h3 {
   border-radius: 10px;
 }
 
-.nav li a {
-  padding: 15px 20px;
-}
-
 .info a:hover {
   color: #111;
   text-decoration: none;
@@ -97,7 +134,6 @@ h3 {
 
 footer p {
   color: #aaa;
-  margin-left: 10px;
   line-height: 1.2;
 }
 
@@ -105,54 +141,25 @@ footer .back {
   margin-top: 25px;
 }
 
-.navbar-collapse.collapse {
-  display: block !important;
-}
-
-.navbar-header {
-  float: left;
-}
-
-.navbar-nav {
-  margin: 0 -15px;
-}
-
-.navbar-nav > li,
-.navbar-nav {
-  float: left !important;
-}
-
-.navbar-nav.navbar-right:last-child {
-  margin-right: -15px !important;
-}
-
-.navbar-right {
-  float: right !important;
-}
-
-.navbar-inverse .navbar-nav > li > a:hover {
-  color: #111;
-  background: #aaa;
-}
-
-.navbar-inverse a.navbar-brand {
-  text-indent: -9999px;
-  background: url(../src/icon60x60.png) no-repeat 2px 0 / contain;
-  width: 60px;
-  margin-right: 15px;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 footer {
-  position: absolute;
+  position: fixed;
   left: 0;
   bottom: 0;
-  height: 45px;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #222;
+  padding: 10px;
+}
+
+.terms_link {
+  padding: 5px 15px;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #aaa;
+  background-color: #555;
+  border-radius: 10px;
 }
 
 .predictions.trains li div {
@@ -179,37 +186,30 @@ footer {
 }
 
 div.Brn {
-  background-color: #62361b;
+  background-color: var(--color-train-Brn);
 }
-
 div.Red {
-  background-color: #c60c30;
+  background-color: var(--color-train-Red);
 }
-
 div.Blue {
-  background-color: #00a1de;
+  background-color: var(--color-train-Blue);
 }
-
 div.G {
-  background-color: #009b3a;
+  background-color: var(--color-train-G);
 }
-
 div.Org {
-  background-color: #f9461c;
+  background-color: var(--color-train-Org);
 }
-
 div.P {
-  background-color: #522398;
+  background-color: var(--color-train-P);
 }
-
 div.Pink {
   color: #111;
-  background-color: #e27ea6;
+  background-color: var(--color-train-Pink);
 }
-
 div.Y {
   color: #111;
-  background-color: #f9e300;
+  background-color: var(--color-train-Y);
 }
 
 .predictions.trains li div.Pink,
@@ -239,9 +239,6 @@ div.Y {
 }
 
 .spin.animate {
-  -webkit-animation: spin 1s infinite linear;
-  -moz-animation: spin 1s infinite linear;
-  -o-animation: spin 1s infinite linear;
   animation: spin 1s infinite linear;
 }
 
@@ -273,16 +270,4 @@ div.Y {
   to {
     transform: rotate(360deg);
   }
-}
-
-.terms_link {
-  padding: 5px 15px;
-  position: absolute;
-  right: 10px;
-  bottom: 3px;
-  font-size: 2rem;
-  font-weight: 500;
-  color: #aaa;
-  background-color: #555;
-  border-radius: 10px;
 }
