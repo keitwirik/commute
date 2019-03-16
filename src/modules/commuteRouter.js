@@ -7,15 +7,35 @@ import trainLines from "./train_lines/train_lines";
 import trainStops from "./train_stops/train_stops";
 import trainStopPredictions from "./train_stop_predictions/train_stop_predictions";
 import trainFollow from "./train_follow/train_follow";
+import timer from "./timer.js";
 
-var parent = document.querySelector(".info");
-
-const Commute = {
-  Views: {},
-  Router: {}
+const _clearMain = () => {
+  const el = document.querySelector("#main");
+  while (el.firstChild) {
+    el.removeChild(el.firstChild);
+  }
 };
 
-const routes = {
+const _matchUrl = url => {
+  if (url === "") {
+    return { name: "home" };
+  }
+  for (let route in Commute.routes) {
+    const match = url.match(Commute.routes[route]);
+    if (match) {
+      const everything = {
+        name: route,
+        props: match
+      };
+      return everything;
+    }
+  }
+  return "nuthin";
+};
+
+const Commute = {};
+
+Commute.routes = {
   home: /^$/,
   busRoutes: /^bus$/,
   busDirections: /^bus\/(\w+)$/,
@@ -27,69 +47,49 @@ const routes = {
   trainFollow: /^train\/f\/(\w+)$/
 };
 
-const matchUrl = url => {
-  if (url === "") {
-    return { function: "home" };
-  }
-  for (var route in routes) {
-    const match = url.match(routes[route]);
-    if (match) {
-      const everything = {
-        function: route,
-        props: match
-      };
-      return everything;
-    }
-  }
-  return "nuthin";
-};
-
 Commute.navigate = page => {
-  //console.log("pushstate", page);
-  //history.pushState(null, null, page);
-  const next = matchUrl(page.replace(/^\//, "").replace(/\/$/, "")); // shave off beginning and ending slashes
-  console.log("next", next);
-  if (next.function) {
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
+  const route = _matchUrl(page.replace(/^\//, "").replace(/\/$/, "")); // shave off beginning and ending slashes
+  console.log("route", route);
+  if (route.name) {
+    _clearMain();
+
+    switch (route.name) {
+      case "home":
+        showRecent();
+        break;
+      case "busRoutes":
+        busRoutes();
+        break;
+      case "trainLines":
+        trainLines();
+        break;
+      case "trainStops":
+        trainStops();
+        break;
+      case "trainStopPredictions":
+        trainStopPredictions(route.props, timer);
+        break;
+      case "trainFollow":
+        trainFollow(route.props);
+        break;
+      case "busDirections":
+        if (route.props[1]) {
+          busDirections(route.props[1]);
+        }
+        break;
+      case "busStops":
+        if (route.props[1] && route.props[2]) {
+          busStops(route.props);
+        }
+        break;
+      case "busStopPredictions":
+        if (route.props[1]) {
+          busStopPredictions(route.props, timer);
+        }
+        break;
+      default:
+        console.error(route.name + " didn't fit anything", route);
     }
-  }
-  if (next.function === "home") {
-    // show recent trips
-    console.log("home page");
-    showRecent();
-  }
-  if (next.function === "busRoutes") {
-    console.log("bus routes dispatch");
-    busRoutes();
-  }
-  if (next.function === "busDirections" && next.props[1]) {
-    console.log("bus directions dispatch", next.props[1]);
-    busDirections(next.props[1]);
-  }
-  if (next.function === "busStops" && next.props[1] && next.props[2]) {
-    console.log("busStops dispatch", next.props);
-    busStops(next.props);
-  }
-  if (next.function === "busStopPredictions" && next.props[1]) {
-    console.log("busStopPredictions dispatch", next.props);
-    busStopPredictions(next.props);
-  }
-  if (next.function === "trainLines") {
-    console.log("train lines dispatch");
-    trainLines();
-  }
-  if (next.function === "trainStops") {
-    console.log("train stops dispatch");
-    trainStops();
-  }
-  if (next.function === "trainStopPredictions") {
-    console.log("train stop predictions dispatch");
-    trainStopPredictions(next.props);
-  }
-  if (next.function === "trainFollow") {
-    console.log("train follow dispatch", next.props);
-    trainFollow(next.props);
   }
 };
 

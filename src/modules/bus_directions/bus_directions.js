@@ -1,19 +1,15 @@
-import api from '../../modules/api';
-import startTimer from '../../modules/startTimer';
-import state from '../../modules/state';
-import createRequest from '../../modules/createRequest';
-import addEventListeners from '../../modules/addEventListeners';
-
-var timer;
+import api from "../../modules/api";
+import createRequest from "../../modules/createRequest";
+import addEventListeners from "../../modules/addEventListeners";
 
 function busDirections(routeId) {
-  const el = document.createElement('div');
+  const el = document.createElement("div");
   const request = createRequest(api.routes.getDirections, { rt: routeId });
 
   fetch(request)
     .then(resp => resp.json())
     .then(data => {
-      const directions = data['bustime-response'].directions.map(bus => ({
+      const directions = data["bustime-response"].directions.map(bus => ({
         dir: bus.dir,
         rt: routeId
       }));
@@ -34,7 +30,7 @@ function busDirections(routeId) {
               </li>
             `
           )
-          .join('')}
+          .join("")}
       </ul>
     `;
 
@@ -42,7 +38,7 @@ function busDirections(routeId) {
 
       addEventListeners(el);
 
-      return document.querySelector('.info').appendChild(el);
+      return document.querySelector("#main").appendChild(el);
     });
 }
 

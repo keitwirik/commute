@@ -1,12 +1,8 @@
 import api from "../../modules/api";
-import startTimer from "../../modules/startTimer";
-import state from "../../modules/state";
 import createRequest from "../../modules/createRequest";
 import addEventListeners from "../../modules/addEventListeners";
 import localStorageManager from "../../modules/localStorageManager.js";
 import { trainColors } from "../../modules/trainsArr.js";
-
-var timer;
 
 function trainLines() {
   console.log("trainLines");
@@ -40,7 +36,7 @@ function trainLines() {
 
   addEventListeners(el);
 
-  return document.querySelector(".info").appendChild(el);
+  return document.querySelector("#main").appendChild(el);
 }
 
 export default trainLines;

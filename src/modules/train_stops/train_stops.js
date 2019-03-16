@@ -1,11 +1,7 @@
-import api from '../../modules/api';
-import startTimer from '../../modules/startTimer';
-import state from '../../modules/state';
-import createRequest from '../../modules/createRequest';
-import addEventListeners from '../../modules/addEventListeners';
-import localStorageManager from '../../modules/localStorageManager.js';
-
-var timer;
+import api from "../../modules/api";
+import createRequest from "../../modules/createRequest";
+import addEventListeners from "../../modules/addEventListeners";
+import localStorageManager from "../../modules/localStorageManager.js";
 
 function filterArrayForDistinctValues(arr, distinctValueKey) {
   let distArr = [];
@@ -19,16 +15,16 @@ function filterArrayForDistinctValues(arr, distinctValueKey) {
 }
 
 function trainStops() {
-  console.log('trainStops');
-  const el = document.createElement('div');
+  console.log("trainStops");
+  const el = document.createElement("div");
 
   const request = api.other.getTrainStopData;
-  localStorageManager.getItem('trainStopData', request).then(function(data) {
-    const trainLine = location.pathname.split('/')[2];
+  localStorageManager.getItem("trainStopData", request).then(function(data) {
+    const trainLine = location.pathname.split("/")[2];
 
     const trainStops = data.filter(stop => stop[trainLine]);
 
-    const trainParentStops = filterArrayForDistinctValues(trainStops, 'map_id');
+    const trainParentStops = filterArrayForDistinctValues(trainStops, "map_id");
 
     console.log(trainParentStops);
 
@@ -49,7 +45,7 @@ function trainStops() {
                 </li>
               `
             )
-            .join('')}
+            .join("")}
         </ul>
         `;
 
@@ -57,7 +53,7 @@ function trainStops() {
 
     addEventListeners(el);
 
-    return document.querySelector('.info').appendChild(el);
+    return document.querySelector("#main").appendChild(el);
   });
 }
 

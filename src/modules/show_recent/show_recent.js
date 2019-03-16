@@ -39,7 +39,7 @@ function showRecent() {
 
   addEventListeners(el);
 
-  return document.querySelector(".info").appendChild(el);
+  return document.querySelector("#main").appendChild(el);
 }
 
 export default showRecent;

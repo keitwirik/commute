@@ -7,7 +7,7 @@ import state from "./modules/state";
 
 import convertDate from "./modules/convertDate";
 import createRequest from "./modules/createRequest";
-import startTimer from "./modules/startTimer";
+// import startTimer from "./modules/startTimer";
 import Commute from "./modules/commuteRouter";
 // import ListBusRoutesView from './modules/bus_routes/bus_routes';
 // import TrainStopsView from './modules/trainstops/trainStops';

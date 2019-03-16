@@ -1,30 +1,25 @@
-import api from '../../modules/api';
-import startTimer from '../../modules/startTimer';
-import state from '../../modules/state';
-import createRequest from '../../modules/createRequest';
-import addEventListeners from '../../modules/addEventListeners';
-import localStorageManager from '../../modules/localStorageManager.js';
-
-var timer;
+import api from "../../modules/api";
+import createRequest from "../../modules/createRequest";
+import addEventListeners from "../../modules/addEventListeners";
 
 function arrivalTimeDisplay(arrival, apiTime) {
-  console.log('a a', new Date(arrival.arrT), apiTime);
-  var display = '';
-  if (arrival.isApp !== '0') {
-    display = 'Due';
-  } else if (arrival.isDly !== '0') {
-    display = 'Delayed';
+  console.log("a a", new Date(arrival.arrT), apiTime);
+  var display = "";
+  if (arrival.isApp !== "0") {
+    display = "Due";
+  } else if (arrival.isDly !== "0") {
+    display = "Delayed";
   } else {
     display = `${Math.ceil(
       (new Date(arrival.arrT) - apiTime) / 1000 / 60
-    )} min ${arrival.isSch !== '0' ? '*' : ''}`;
+    )} min ${arrival.isSch !== "0" ? "*" : ""}`;
   }
   return display;
 }
 
 function trainFollow(props) {
-  console.log('trainFollow', props);
-  const el = document.createElement('div');
+  console.log("trainFollow", props);
+  const el = document.createElement("div");
 
   const request = createRequest(api.routes.getTrainFollow, {
     runnumber: props[1]
@@ -33,10 +28,10 @@ function trainFollow(props) {
   fetch(request)
     .then(resp => resp.json())
     .then(data => {
-      console.log('err', data.ctatt.errCd, data.ctatt.errCd === '502');
-      if (data.ctatt.errCd === '502') {
+      console.log("err", data.ctatt.errCd, data.ctatt.errCd === "502");
+      if (data.ctatt.errCd === "502") {
         el.innerHTML = `<header><h3>${data.ctatt.errNm}</h3></header>`;
-        return document.querySelector('.info').appendChild(el);
+        return document.querySelector("#main").appendChild(el);
       }
 
       const arrivals = data.ctatt.eta;
@@ -77,7 +72,7 @@ function trainFollow(props) {
                 </li>
               `
             )
-            .join('')}
+            .join("")}
         </ul>
       `;
 
@@ -85,7 +80,7 @@ function trainFollow(props) {
 
       addEventListeners(el);
 
-      return document.querySelector('.info').appendChild(el);
+      return document.querySelector("#main").appendChild(el);
     });
 }
 

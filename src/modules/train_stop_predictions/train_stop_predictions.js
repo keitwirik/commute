@@ -1,14 +1,16 @@
 import api from "../../modules/api";
-import startTimer from "../../modules/startTimer";
-import state from "../../modules/state";
 import createRequest from "../../modules/createRequest";
 import addEventListeners from "../../modules/addEventListeners";
 import localStorageManager from "../../modules/localStorageManager.js";
 import { trainColors } from "../../modules/trainsArr.js";
 
-var timer;
+// get line display name from route id
+const _convertRouteName = rt => {
+  let x = trainColors.find(line => line.line_id === rt.toLowerCase());
+  return x.line_name;
+};
 
-function arrivalTimeDisplay(arrival, apiTime) {
+const _arrivalTimeDisplay = (arrival, apiTime) => {
   console.log("a a", new Date(arrival.arrT), apiTime);
   var display = "";
   if (arrival.isApp !== "0") {
@@ -21,9 +23,9 @@ function arrivalTimeDisplay(arrival, apiTime) {
     )} min ${arrival.isSch !== "0" ? "*" : ""}`;
   }
   return display;
-}
+};
 
-function trainStopPredictions(props) {
+function trainStopPredictions(props, callback) {
   console.log("trainStopPredictions", props);
   const el = document.createElement("div");
 
@@ -39,18 +41,12 @@ function trainStopPredictions(props) {
       const arrivals = data.ctatt.eta;
       const apiTime = new Date(data.ctatt.tmst);
 
-      // get line display name from route id
-      const convertRouteName = rt => {
-        let x = trainColors.find(line => line.line_id === rt.toLowerCase());
-        return x.line_name;
-      };
-
       // array of unique trains lines arriving
       // TODO: pull this from localstorage trainstopdata instead
       let rtArr = [];
       arrivals.forEach(arrival => {
-        rtArr.includes(convertRouteName(arrival.rt)) ||
-          rtArr.push(convertRouteName(arrival.rt));
+        rtArr.includes(_convertRouteName(arrival.rt)) ||
+          rtArr.push(_convertRouteName(arrival.rt));
       });
 
       const stopInfo = {
@@ -58,6 +54,7 @@ function trainStopPredictions(props) {
         path: location.pathname,
         id: arrivals[0].staId // station id not stop id
       };
+
       // add route to localstorage here
       localStorageManager.pushStopToRecent(stopInfo);
       console.log("add to localstorage", stopInfo);
@@ -80,7 +77,7 @@ function trainStopPredictions(props) {
                     data-rt="${arrival.rn}">
                     <div>${arrival.stpDe}</div>
                     <div>
-                    ${arrivalTimeDisplay(arrival, apiTime)}
+                    ${_arrivalTimeDisplay(arrival, apiTime)}
                     </div>
                   </a>
                 </li>
@@ -89,7 +86,7 @@ function trainStopPredictions(props) {
                 <li class="${arrival.rt}">
                   <div>${arrival.stpDe}</div>
                   <div>
-                  ${arrivalTimeDisplay(arrival, apiTime)}
+                  ${_arrivalTimeDisplay(arrival, apiTime)}
                   </div>
                 </li>
                 `
@@ -103,8 +100,9 @@ function trainStopPredictions(props) {
       el.innerHTML = template;
 
       addEventListeners(el);
+      callback();
 
-      return document.querySelector(".info").appendChild(el);
+      return document.querySelector("#main").appendChild(el);
     });
 }
 
