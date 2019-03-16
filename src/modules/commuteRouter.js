@@ -15,10 +15,6 @@ const Commute = {
   Router: {}
 };
 
-const busdirection = props => {
-  console.log("bus route", props);
-};
-
 const routes = {
   home: /^$/,
   busRoutes: /^bus$/,
@@ -49,10 +45,9 @@ const matchUrl = url => {
 };
 
 Commute.navigate = page => {
-  console.log("navigating", page);
-  history.pushState(null, null, page);
-  page = page.replace(/^\//, "").replace(/\/$/, ""); // shave off slashs
-  const next = matchUrl(page);
+  //console.log("pushstate", page);
+  //history.pushState(null, null, page);
+  const next = matchUrl(page.replace(/^\//, "").replace(/\/$/, "")); // shave off beginning and ending slashes
   console.log("next", next);
   if (next.function) {
     while (parent.firstChild) {

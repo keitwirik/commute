@@ -1,6 +1,3 @@
-import api from "../../modules/api";
-import state from "../../modules/state";
-import createRequest from "../../modules/createRequest";
 import addEventListeners from "../../modules/addEventListeners";
 import localStorageManager from "../../modules/localStorageManager.js";
 

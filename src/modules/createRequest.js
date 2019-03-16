@@ -1,18 +1,13 @@
-import api from './api';
+import api from "./api";
 
-function createRequest(route, params) {
-  return (
-    api.url +
-    route +
-    '?' +
-    Object.keys(params)
-      .map(value => {
-        return (
-          encodeURIComponent(value) + '=' + encodeURIComponent(params[value])
-        );
-      })
-      .join('&')
-  );
-}
+const _encodeData = data =>
+  Object.keys(data)
+    .map(
+      value => encodeURIComponent(value) + "=" + encodeURIComponent(data[value])
+    )
+    .join("&");
+
+const createRequest = (route, params) =>
+  api.url + route + "?" + _encodeData(params);
 
 export default createRequest;
