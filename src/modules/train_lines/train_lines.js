@@ -17,14 +17,14 @@ function trainLines() {
     <h3>Routes</h3>
   </header>
   <ul class="trains">
-    ${trainLines
+    ${trainColors
       .map(
         train => `
           <li>
             <a
               class="route"
               href="/train/${train.line_id}"
-              data-rt="${train.line_ed}">
+              data-rt="${train.line_id}">
               ${train.line_name} Line</a>
           </li>
         `

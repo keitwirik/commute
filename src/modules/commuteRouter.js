@@ -1,3 +1,4 @@
+import showRecent from "./show_recent/show_recent";
 import busRoutes from "./bus_routes/bus_routes";
 import busDirections from "./bus_directions/bus_directions";
 import busStops from "./bus_stops/bus_stops";
@@ -61,6 +62,7 @@ Commute.navigate = page => {
   if (next.function === "home") {
     // show recent trips
     console.log("home page");
+    showRecent();
   }
   if (next.function === "busRoutes") {
     console.log("bus routes dispatch");

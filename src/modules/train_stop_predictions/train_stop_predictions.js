@@ -7,7 +7,6 @@ import localStorageManager from "../../modules/localStorageManager.js";
 import { trainColors } from "../../modules/trainsArr.js";
 
 var timer;
-console.log("hhh", trainColors);
 
 function arrivalTimeDisplay(arrival, apiTime) {
   console.log("a a", new Date(arrival.arrT), apiTime);
@@ -40,26 +39,29 @@ function trainStopPredictions(props) {
       const arrivals = data.ctatt.eta;
       const apiTime = new Date(data.ctatt.tmst);
 
+      // get line display name from route id
       const convertRouteName = rt => {
         let x = trainColors.find(line => line.line_id === rt.toLowerCase());
         return x.line_name;
       };
 
-      console.log(arrivals);
-      // add route to localstorage here
+      // array of unique trains lines arriving
+      // TODO: pull this from localstorage trainstopdata instead
       let rtArr = [];
       arrivals.forEach(arrival => {
         rtArr.includes(convertRouteName(arrival.rt)) ||
           rtArr.push(convertRouteName(arrival.rt));
-        console.log("c", rtArr, arrival.rt, convertRouteName(arrival.rt));
       });
 
       const stopInfo = {
         stopName: `${arrivals[0].staNm} ${rtArr.toString()}`,
         path: location.pathname,
-        stopId: arrivals[0].stpId
+        id: arrivals[0].staId // station id not stop id
       };
+      // add route to localstorage here
+      localStorageManager.pushStopToRecent(stopInfo);
       console.log("add to localstorage", stopInfo);
+
       const template = `
         <header>
           <h3>${arrivals[0].staNm} Arrivals</h3>

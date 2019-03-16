@@ -56,12 +56,31 @@ const localStorageManager = {
     }
   },
 
+  getRecent() {
+    if (localStorage.getItem("recent") !== null) {
+      return JSON.parse(localStorage.getItem("recent"));
+    }
+  },
+
   pushStopToRecent(stopInfo) {
+    let recent = [];
     // does recent list exist
     if (localStorage.getItem("recent") === null) {
-      localStorage.setItem("recent", JSON.stringify(stopInfo));
+      recent.push(stopInfo);
+      localStorage.setItem("recent", JSON.stringify(recent));
       return;
     }
+
+    recent = JSON.parse(localStorage.getItem("recent"));
+    recent.forEach(i => {
+      if (i.id === stopInfo.id) {
+        recent.splice(recent.indexOf(i), 1);
+        return false;
+      }
+    });
+    recent.unshift(stopInfo);
+    recent.length <= 10 || recent.shift();
+    localStorage.setItem("recent", JSON.stringify(recent));
   }
 };
 

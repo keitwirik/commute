@@ -28,7 +28,7 @@ export const trainColors = [
     line_name: "Yellow"
   },
   {
-    line_id: "pnk",
+    line_id: "pink",
     line_name: "Pink"
   },
   {
