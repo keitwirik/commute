@@ -60,7 +60,7 @@ a:focus {
   outline: 0;
 }
 
-header {
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,12 +68,10 @@ header {
   border-bottom: 1px solid #111;
   width: 100%;
   padding: 0 10px;
-}
-
-.main-header {
   position: fixed;
   top: 0;
 }
+
 nav a {
   display: inline-block;
   padding: 15px 20px;
@@ -219,26 +217,23 @@ div.Y {
 }
 
 .spinner {
-  display: none;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  right: 15px;
+}
+.spinner button {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
 }
 
-.spinner .spin {
-  cursor: pointer;
-  display: inline-block;
-  font-size: 3rem;
-  color: #aaa;
-  margin: 7px 17px 0 0;
+svg#spinner .s {
+  fill: #aaa;
+  transition: fill 0.2s linear;
+}
+svg#spinner:hover .s {
+  fill: #fff;
 }
 
-.spin:hover {
-  color: white;
-}
-
-.spin.animate {
+svg#spinner.animate {
   animation: spin 1s infinite linear;
 }
 
