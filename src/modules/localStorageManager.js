@@ -81,6 +81,13 @@ const localStorageManager = {
     recent.unshift(stopInfo);
     recent.length <= 10 || recent.shift();
     localStorage.setItem("recent", JSON.stringify(recent));
+  },
+
+  checkAppVersion(appVersion) {
+    if (localStorage.getItem("AppVersion") !== appVersion) {
+      localStorage.clear();
+      localStorage.setItem("AppVersion", appVersion);
+    }
   }
 };
 
