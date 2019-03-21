@@ -37,7 +37,6 @@ function busStops(props, callback) {
       el.innerHTML = template;
 
       addEventListeners(el);
-      callback();
 
       return document.querySelector("#main").appendChild(el);
     });

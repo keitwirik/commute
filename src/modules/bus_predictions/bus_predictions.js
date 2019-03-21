@@ -1,8 +1,9 @@
 import api from "../../modules/api";
 import createRequest from "../../modules/createRequest";
 import addEventListeners from "../../modules/addEventListeners";
+import timer from "../../modules/timer";
 
-function busStopPredictions(props) {
+function busStopPredictions(props, callback) {
   console.log("busStopPredictions props", props);
   const el = document.createElement("div");
   const request = createRequest(api.routes.getPredictions, {
@@ -37,6 +38,7 @@ function busStopPredictions(props) {
       el.innerHTML = template;
 
       addEventListeners(el);
+      callback();
 
       return document.querySelector("#main").appendChild(el);
     });

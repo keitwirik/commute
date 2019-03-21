@@ -7,14 +7,7 @@ import trainLines from "./train_lines/train_lines";
 import trainStops from "./train_stops/train_stops";
 import trainStopPredictions from "./train_stop_predictions/train_stop_predictions";
 import trainFollow from "./train_follow/train_follow";
-import timer from "./timer.js";
-
-const _clearMain = () => {
-  const el = document.querySelector("#main");
-  while (el.firstChild) {
-    el.removeChild(el.firstChild);
-  }
-};
+import timer from "./timer";
 
 const _matchUrl = url => {
   if (url === "") {
@@ -50,46 +43,43 @@ Commute.routes = {
 Commute.navigate = page => {
   const route = _matchUrl(page.replace(/^\//, "").replace(/\/$/, "")); // shave off beginning and ending slashes
   console.log("route", route);
-  if (route.name) {
-    _clearMain();
 
-    switch (route.name) {
-      case "home":
-        showRecent();
-        break;
-      case "busRoutes":
-        busRoutes();
-        break;
-      case "trainLines":
-        trainLines();
-        break;
-      case "trainStops":
-        trainStops();
-        break;
-      case "trainStopPredictions":
-        trainStopPredictions(route.props, timer);
-        break;
-      case "trainFollow":
-        trainFollow(route.props);
-        break;
-      case "busDirections":
-        if (route.props[1]) {
-          busDirections(route.props[1]);
-        }
-        break;
-      case "busStops":
-        if (route.props[1] && route.props[2]) {
-          busStops(route.props);
-        }
-        break;
-      case "busStopPredictions":
-        if (route.props[1]) {
-          busStopPredictions(route.props, timer);
-        }
-        break;
-      default:
-        console.error(route.name + " didn't fit anything", route);
-    }
+  switch (route.name) {
+    case "home":
+      showRecent();
+      break;
+    case "busRoutes":
+      busRoutes();
+      break;
+    case "trainLines":
+      trainLines();
+      break;
+    case "trainStops":
+      trainStops();
+      break;
+    case "trainStopPredictions":
+      trainStopPredictions(route.props, timer.startTimer);
+      break;
+    case "trainFollow":
+      trainFollow(route.props);
+      break;
+    case "busDirections":
+      if (route.props[1]) {
+        busDirections(route.props[1]);
+      }
+      break;
+    case "busStops":
+      if (route.props[1] && route.props[2]) {
+        busStops(route.props);
+      }
+      break;
+    case "busStopPredictions":
+      if (route.props[1]) {
+        busStopPredictions(route.props, timer.startTimer);
+      }
+      break;
+    default:
+      console.error(route.name + " didn't fit anything", route);
   }
 };
 

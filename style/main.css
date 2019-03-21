@@ -233,7 +233,7 @@ svg#spinner:hover .s {
   fill: #fff;
 }
 
-svg#spinner.animate {
+.spinner.animated #spinner {
   animation: spin 1s infinite linear;
 }
 
