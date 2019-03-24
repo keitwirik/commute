@@ -6,24 +6,15 @@ import localStorageManager from "./modules/localStorageManager";
 
 const appVersion = "2.0";
 
-// header navigation
-const indexNav = document.querySelector(".logo");
-indexNav.addEventListener("click", function(e) {
-  e.preventDefault();
-  history.pushState(null, null, "/");
-  Commute.navigate("/");
-});
-const busNav = document.querySelector('[data-action="bus"]');
-busNav.addEventListener("click", function(e) {
-  e.preventDefault();
-  history.pushState(null, null, "/bus");
-  Commute.navigate("/bus");
-});
-const trainNav = document.querySelector('[data-action="train"]');
-trainNav.addEventListener("click", function(e) {
-  e.preventDefault();
-  history.pushState(null, null, "/train");
-  Commute.navigate("/train");
+// main navigation
+document.querySelector('.page-header nav')
+  .querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const path = a.attributes.href.nodeValue;
+      e.preventDefault();
+      history.pushState(null, null, path );
+      Commute.navigate(path);
+    })
 });
 
 localStorageManager.checkAppVersion(appVersion);

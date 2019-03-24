@@ -1,6 +1,9 @@
 :root {
+  --color-main: #eee;
   --color-main-bg: #333;
   --font-family-main: "Ubuntu", sans-serif;
+  --color-header-bg: #222;
+  --header-border: 1px solid #111;
   --color-train-Brn: #62361b;
   --color-train-Red: #c60c30;
   --color-train-Blue: #00a1de;
@@ -13,24 +16,23 @@
   font-size: 62.5%;
 }
 :root body {
-  margin: 0;
   font-size: 1.6rem;
 }
 
 html {
   box-sizing: border-box;
+  height: 100%;
 }
 *,
 *:before,
 *:after {
   box-sizing: inherit;
 }
-html {
-  height: 100%;
-}
 
 body {
-  color: white;
+  margin: 0;
+  padding-top: 50px;
+  color: var(--color-main);
   font-family: var(--font-family-main);
   background: linear-gradient(
       to bottom,
@@ -38,7 +40,6 @@ body {
       rgba(0, 0, 0, 0.8) 100%
     ),
     url(../src/bg_sm.jpg) no-repeat center / cover;
-  padding-top: 50px;
 }
 
 @media (min-width: 800px) {
@@ -53,31 +54,32 @@ body {
 }
 
 a {
-  color: #eee;
+  color: var(--color-main);
 }
 
 a:focus {
   outline: 0;
 }
 
+/* header */
 .page-header {
+  position: fixed;
+  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #222;
-  border-bottom: 1px solid #111;
   width: 100%;
   padding: 0 10px;
-  position: fixed;
-  top: 0;
+  background-color: var(--color-header-bg);
+  border-bottom: var(--header-border);
 }
-
-nav a {
+/* nav */
+.nav a {
   display: inline-block;
   padding: 15px 20px;
 }
 
-nav a:hover {
+.nav a:hover {
   color: #111;
   background: #aaa;
 }
@@ -86,6 +88,29 @@ nav a:hover {
   background: url(../src/icon60x60.png) no-repeat 2px 0 / contain;
   width: 60px;
 }
+
+/* - nav */
+
+.spinner {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+}
+
+svg#spinner .s {
+  fill: #aaa;
+  transition: fill 0.2s linear;
+}
+svg#spinner:hover .s {
+  fill: #fff;
+}
+
+.spinner.animated #spinner {
+  animation: spin 1s infinite linear;
+}
+
+/* - header */
 
 h3 {
   color: #aaa;
@@ -216,46 +241,7 @@ div.Y {
   text-shadow: none;
 }
 
-.spinner {
-}
-.spinner button {
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  border: 0;
-  background: transparent;
-}
 
-svg#spinner .s {
-  fill: #aaa;
-  transition: fill 0.2s linear;
-}
-svg#spinner:hover .s {
-  fill: #fff;
-}
-
-.spinner.animated #spinner {
-  animation: spin 1s infinite linear;
-}
-
-@-moz-keyframes spin {
-  from {
-    -moz-transform: rotate(0);
-  }
-
-  to {
-    -moz-transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes spin {
-  from {
-    -webkit-transform: rotate(0);
-  }
-
-  to {
-    -webkit-transform: rotate(360deg);
-  }
-}
 
 @keyframes spin {
   from {
