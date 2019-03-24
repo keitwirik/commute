@@ -30,7 +30,7 @@ function trainFollow(props) {
     .then(data => {
       console.log("err", data.ctatt.errCd, data.ctatt.errCd === "502");
       if (data.ctatt.errCd === "502") {
-        el.innerHTML = `<header><h3>${data.ctatt.errNm}</h3></header>`;
+        el.innerHTML = `<header><h1 class="heading-1">${data.ctatt.errNm}</h1></header>`;
         return document.querySelector("#main").appendChild(el);
       }
 
@@ -41,9 +41,9 @@ function trainFollow(props) {
 
       const template = `
         <header>
-          <h3>
+          <h1 class="heading-1">
           ${arrivals[0].rt} Run #${arrivals[0].rn} Toward ${arrivals[0].destNm}
-          </h3>
+          </h1>
         </header>
         <ul class="trains">
           ${arrivals

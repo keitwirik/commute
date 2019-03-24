@@ -61,7 +61,7 @@ function trainStopPredictions(props, callback) {
 
       const template = `
         <header>
-          <h3>${arrivals[0].staNm} Arrivals</h3>
+          <h1 class="heading-1">${arrivals[0].staNm} Arrivals</h1>
         </header>
         <ul class="trains">
           ${arrivals
@@ -84,9 +84,11 @@ function trainStopPredictions(props, callback) {
                 `
                   : `
                 <li class="${arrival.rt}">
-                  <div>${arrival.stpDe}</div>
-                  <div>
-                  ${_arrivalTimeDisplay(arrival, apiTime)}
+                  <div class="route">
+                    <div>${arrival.stpDe}</div>
+                    <div>
+                    ${_arrivalTimeDisplay(arrival, apiTime)}
+                    </div>
                   </div>
                 </li>
                 `

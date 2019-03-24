@@ -15,7 +15,7 @@ function busDirections(routeId) {
       }));
       const template = `
       <header>
-        <h3>${routeId} Directions</h3>
+        <h1 class="heading-1">${routeId} Directions</h1>
       </header>
       <ul>
         ${directions

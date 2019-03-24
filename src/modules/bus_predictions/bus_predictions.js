@@ -16,9 +16,9 @@ function busStopPredictions(props, callback) {
       const predictions = data["bustime-response"].prd;
       const template = `
       <header>
-        <h3>#${predictions[0].rt} ${predictions[0].rtdir} ${
+        <h1 class="heading-1">#${predictions[0].rt} ${predictions[0].rtdir} ${
         predictions[0].stpnm
-      }</h3>
+      }</h1>
       </header>
       <ul>
         ${predictions

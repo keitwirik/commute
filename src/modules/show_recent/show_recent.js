@@ -10,7 +10,7 @@ function showRecent() {
     recentList
       ? `
     <header>
-      <h3>Recent</h3>
+      <h1 class="heading-1">Recent</h1>
     </header>
     <ul>
       ${recentList
@@ -29,7 +29,7 @@ function showRecent() {
       `
       : `
         <header>
-          <h3>No Recent Trips Available</h3>
+          <h1 class="heading-1">No Recent Trips Available</h1>
         </header>
       `
   }

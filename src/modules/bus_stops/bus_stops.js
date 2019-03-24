@@ -16,7 +16,7 @@ function busStops(props, callback) {
       const stops = data["bustime-response"].stops;
       const template = `
       <header>
-        <h3>Stops</h3>
+        <h1 class="heading-1">Stops</h1>
       </header>
       <ul>
         ${stops

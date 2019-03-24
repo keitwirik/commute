@@ -10,7 +10,7 @@ function trainLines() {
 
   const template = `
   <header>
-    <h3>Routes</h3>
+    <h1 class="heading-1">Routes</h1>
   </header>
   <ul class="trains">
     ${trainColors

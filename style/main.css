@@ -13,6 +13,8 @@
   --color-train-Pink: #e27ea6;
   --color-train-Y: #f9e300;
 
+  --container-padding: 0 10px;
+
   font-size: 62.5%;
 }
 :root body {
@@ -61,6 +63,13 @@ a:focus {
   outline: 0;
 }
 
+
+.page-header,
+.main,
+.footer {
+  padding: var(--container-padding);
+}
+
 /* header */
 .page-header {
   position: fixed;
@@ -69,7 +78,6 @@ a:focus {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 10px;
   background-color: var(--color-header-bg);
   border-bottom: var(--header-border);
 }
@@ -112,25 +120,30 @@ svg#spinner:hover .s {
 
 /* - header */
 
-h3 {
+/* main */
+
+.heading-1 {
+  margin: 0 -10px;
   color: #aaa;
   font-weight: 300;
-  margin-top: 10px;
+  padding: 10px;
+  background-color: var(--color-header-bg);
+  border-bottom: var(--header-border);
 }
 
-#main ul {
+.main ul {
   max-height: 80vh;
   overflow: auto;
   padding: 0;
 }
 
-#main li {
+.main li {
   list-style-type: none;
   border-bottom: 1px solid #111;
   clear: both;
 }
 
-#main a,
+.main .route,
 .predictions div {
   display: block;
   padding: 0.5rem 1rem;
@@ -138,11 +151,11 @@ h3 {
   line-height: 1.5;
   font-weight: 300;
   background: rgba(70, 70, 70, 0.8);
-  margin: 2px 10px;
+  margin: 2px 0;
   border-radius: 10px;
 }
 
-#main a:hover {
+.main a:hover {
   color: #111;
   text-decoration: none;
   background: #aaa;
