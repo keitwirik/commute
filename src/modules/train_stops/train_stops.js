@@ -38,7 +38,7 @@ function trainStops() {
               stop => `
                 <li>
                   <a
-                    class="route"
+                    class="cell"
                     href="/train/s/${stop.map_id}"
                     data-rt="${stop.map_id}">
                     ${stop.station_descriptive_name}</a>

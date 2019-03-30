@@ -51,7 +51,7 @@ function trainFollow(props) {
               arrival => `
                 <li class="${arrival.rt}">
                   <a
-                    class="route"
+                    class="cell"
                     href="/train/s/${arrival.staId}"
                     data-rt="${arrival.rt}">
                     <div>

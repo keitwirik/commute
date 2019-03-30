@@ -18,7 +18,7 @@ function showRecent() {
           item => `
             <li>
               <a
-              class="route"
+              class="cell"
               href="${item.path}"
               data-stop="${item.id}">${item.stopName}</a>
             </li>

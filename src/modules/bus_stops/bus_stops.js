@@ -24,7 +24,7 @@ function busStops(props, callback) {
             stop => `
               <li>
                 <a
-                class="direction"
+                class="cell"
                 href="/bus/s/${stop.stpid}"
                 data-stop="${stop.stpid}">${stop.stpnm}</a>
               </li>

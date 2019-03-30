@@ -22,7 +22,7 @@ function busRoutes() {
             .map(
               bus => `
                 <li>
-                  <a class="route" href="/bus/${bus.rt}" data-rt="${bus.rt}">${
+                  <a class="cell" href="/bus/${bus.rt}" data-rt="${bus.rt}">${
                 bus.rt
               } ${bus.rtnm} </a>
                 </li>

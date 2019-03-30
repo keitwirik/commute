@@ -72,7 +72,7 @@ function trainStopPredictions(props, callback) {
                   ? `
                 <li class="${arrival.rt}">
                   <a
-                    class="route"
+                    class="cell"
                     href="/train/f/${arrival.rn}"
                     data-rt="${arrival.rn}">
                     <div>${arrival.stpDe}</div>
@@ -83,12 +83,10 @@ function trainStopPredictions(props, callback) {
                 </li>
                 `
                   : `
-                <li class="${arrival.rt}">
-                  <div class="route">
-                    <div>${arrival.stpDe}</div>
-                    <div>
-                    ${_arrivalTimeDisplay(arrival, apiTime)}
-                    </div>
+                <li class="cell ${arrival.rt}">
+                  <div>${arrival.stpDe}</div>
+                  <div>
+                  ${_arrivalTimeDisplay(arrival, apiTime)}
                   </div>
                 </li>
                 `

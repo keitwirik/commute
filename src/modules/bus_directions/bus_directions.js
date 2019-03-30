@@ -23,7 +23,7 @@ function busDirections(routeId) {
             direction => `
               <li>
                 <a
-                class="direction"
+                class="cell"
                 href="/bus/${direction.rt}/${direction.dir}"
                 data-dir="${direction.dir}"
                 data-rt="${direction.rt}">${direction.dir}</a>

@@ -82,18 +82,21 @@ a:focus {
   border-bottom: var(--header-border);
 }
 /* nav */
+.nav {
+  display: flex;
+}
+
 .nav a {
-  display: inline-block;
   padding: 15px 20px;
 }
 
-.nav a:hover {
+.nav a:not(.logo):hover {
   color: #111;
   background: #aaa;
 }
 
 .logo {
-  background: url(../src/icon60x60.png) no-repeat 2px 0 / contain;
+  background: url(../src/icon60x60.png) transparent no-repeat 2px 0 / contain;
   width: 60px;
 }
 
@@ -143,9 +146,10 @@ svg#spinner:hover .s {
   clear: both;
 }
 
-.main .route,
-.predictions div {
-  display: block;
+.cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0.5rem 1rem;
   font-size: 2rem;
   line-height: 1.5;

@@ -18,7 +18,7 @@ function trainLines() {
         train => `
           <li>
             <a
-              class="route"
+              class="cell"
               href="/train/${train.line_id}"
               data-rt="${train.line_id}">
               ${train.line_name} Line</a>
