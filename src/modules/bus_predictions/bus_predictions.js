@@ -25,15 +25,15 @@ function busStopPredictions(props, callback) {
           .map(
             prd => `
               <li class="cell">
-                  <span class="sm">${prd.rtdir} #${prd.rt} to ${prd.des}</span>
-                  <span class="lg">${
+                  <div>${prd.rtdir} #${prd.rt} to ${prd.des}</div>
+                  <div class="arrivalTime">${
                     prd.dly
                       ? `Delayed`
                       : `${
                           prd.prdctdn === "DUE"
                             ? `${prd.prdctdn}`
                             : `${prd.prdctdn} min`
-                        } </span>
+                        } </div>
                   ${prd.dly ? `Delayed` : ``}
                   `
                   }

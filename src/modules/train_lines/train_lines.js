@@ -5,7 +5,6 @@ import localStorageManager from "../../modules/localStorageManager.js";
 import { trainColors } from "../../modules/trainsArr.js";
 
 function trainLines() {
-  console.log("trainLines");
   const el = document.createElement("div");
 
   const template = `
@@ -19,9 +18,9 @@ function trainLines() {
           <li>
             <a
               class="cell"
-              href="/train/${train.line_id}"
-              data-rt="${train.line_id}">
-              ${train.line_name} Line</a>
+              href="/train/${train.trainStopData_id}"
+              data-rt="${train.trainStopData_id}">
+              ${train.display_name} Line</a>
           </li>
         `
       )

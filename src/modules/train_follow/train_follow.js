@@ -17,7 +17,7 @@ function arrivalTimeDisplay(arrival, apiTime) {
   return display;
 }
 
-function trainFollow(props) {
+function trainFollow(props, callback) {
   console.log("trainFollow", props);
   const el = document.createElement("div");
 
@@ -30,7 +30,9 @@ function trainFollow(props) {
     .then(data => {
       console.log("err", data.ctatt.errCd, data.ctatt.errCd === "502");
       if (data.ctatt.errCd === "502") {
-        el.innerHTML = `<header><h1 class="heading-1">${data.ctatt.errNm}</h1></header>`;
+        el.innerHTML = `<header><h1 class="heading-1">${
+          data.ctatt.errNm
+        }</h1></header>`;
         return document.querySelector("#main").appendChild(el);
       }
 
@@ -54,7 +56,7 @@ function trainFollow(props) {
                     class="cell"
                     href="/train/s/${arrival.staId}"
                     data-rt="${arrival.rt}">
-                    <div>
+                    <div class="stopDesc">
                       ${
                         arrival.staNm === arrival.destNm
                           ? `
@@ -65,7 +67,7 @@ function trainFollow(props) {
                         `
                       }
                     </div>
-                    <div>
+                    <div class="arrivalTime">
                     ${arrivalTimeDisplay(arrival, apiTime)}
                     </div>
                   </a>
@@ -79,6 +81,7 @@ function trainFollow(props) {
       el.innerHTML = template;
 
       addEventListeners(el);
+      callback();
 
       return document.querySelector("#main").appendChild(el);
     });

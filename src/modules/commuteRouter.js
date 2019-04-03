@@ -61,7 +61,7 @@ Commute.navigate = page => {
       trainStopPredictions(route.props, timer.startTimer);
       break;
     case "trainFollow":
-      trainFollow(route.props);
+      trainFollow(route.props, timer.startTimer);
       break;
     case "busDirections":
       if (route.props[1]) {

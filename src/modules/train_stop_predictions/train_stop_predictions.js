@@ -6,12 +6,11 @@ import { trainColors } from "../../modules/trainsArr.js";
 
 // get line display name from route id
 const _convertRouteName = rt => {
-  let x = trainColors.find(line => line.line_id === rt.toLowerCase());
-  return x.line_name;
+  let x = trainColors.find(line => line.ctatt_rt === rt.toLowerCase());
+  return x.display_name;
 };
 
 const _arrivalTimeDisplay = (arrival, apiTime) => {
-  console.log("a a", new Date(arrival.arrT), apiTime);
   var display = "";
   if (arrival.isApp !== "0") {
     display = "Due";
@@ -26,7 +25,6 @@ const _arrivalTimeDisplay = (arrival, apiTime) => {
 };
 
 function trainStopPredictions(props, callback) {
-  console.log("trainStopPredictions", props);
   const el = document.createElement("div");
 
   const request = createRequest(api.routes.getTrainpredictions, {
@@ -57,7 +55,6 @@ function trainStopPredictions(props, callback) {
 
       // add route to localstorage here
       localStorageManager.pushStopToRecent(stopInfo);
-      console.log("add to localstorage", stopInfo);
 
       const template = `
         <header>
@@ -75,8 +72,8 @@ function trainStopPredictions(props, callback) {
                     class="cell"
                     href="/train/f/${arrival.rn}"
                     data-rt="${arrival.rn}">
-                    <div>${arrival.stpDe}</div>
-                    <div>
+                    <div class="stopDesc">${arrival.stpDe}</div>
+                    <div class="arrivalTime">
                     ${_arrivalTimeDisplay(arrival, apiTime)}
                     </div>
                   </a>
@@ -84,8 +81,8 @@ function trainStopPredictions(props, callback) {
                 `
                   : `
                 <li class="cell ${arrival.rt}">
-                  <div>${arrival.stpDe}</div>
-                  <div>
+                  <div class="stopDesc">${arrival.stpDe}</div>
+                  <div class="arrivalTime">
                   ${_arrivalTimeDisplay(arrival, apiTime)}
                   </div>
                 </li>

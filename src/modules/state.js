@@ -1,6 +1,9 @@
 import Commute from "../modules/commuteRouter";
 
-const state = () => Commute.navigate(window.location.pathname);
+const state = () => {
+  console.log("popstate");
+  Commute.navigate(window.location.pathname);
+};
 
 window.addEventListener("popstate", state);
 

@@ -32,8 +32,10 @@ html {
 }
 
 body {
+  width: 100%;
   margin: 0;
-  padding-top: 50px;
+  padding: 0;
+  overflow: hidden;
   color: var(--color-main);
   font-family: var(--font-family-main);
   background: linear-gradient(
@@ -63,17 +65,8 @@ a:focus {
   outline: 0;
 }
 
-
-.page-header,
-.main,
-.footer {
-  padding: var(--container-padding);
-}
-
 /* header */
 .page-header {
-  position: fixed;
-  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -88,6 +81,7 @@ a:focus {
 
 .nav a {
   padding: 15px 20px;
+  text-decoration: none;
 }
 
 .nav a:not(.logo):hover {
@@ -125,6 +119,10 @@ svg#spinner:hover .s {
 
 /* main */
 
+.main {
+  padding: var(--container-padding);
+}
+
 .heading-1 {
   margin: 0 -10px;
   color: #aaa;
@@ -134,16 +132,16 @@ svg#spinner:hover .s {
   border-bottom: var(--header-border);
 }
 
-.main ul {
-  max-height: 80vh;
-  overflow: auto;
-  padding: 0;
+.main > div {
+  padding-bottom: 75px;
 }
 
-.main li {
+.main ul {
+  max-height: calc(100vh - 165px);
+  overflow: auto;
+  margin: 0;
+  padding: 0;
   list-style-type: none;
-  border-bottom: 1px solid #111;
-  clear: both;
 }
 
 .cell {
@@ -155,8 +153,23 @@ svg#spinner:hover .s {
   line-height: 1.5;
   font-weight: 300;
   background: rgba(70, 70, 70, 0.8);
-  margin: 2px 0;
+  margin: 4px 0;
   border-radius: 10px;
+}
+
+a.cell {
+  text-decoration: none;
+}
+
+a.cell .stopDesc {
+  text-decoration: underline;
+}
+a.cell .stopDesc:hover {
+  text-decoration: none;
+}
+
+.arrivalTime {
+  font-weight: 600;
 }
 
 .main a:hover {
@@ -165,14 +178,8 @@ svg#spinner:hover .s {
   background: #aaa;
 }
 
-.sm {
-  font-size: 1.5rem;
-  position: relative;
-  display: inline-block;
-  max-width: 80%;
-}
-
 footer p {
+  margin: 0;
   color: #aaa;
   line-height: 1.2;
 }
@@ -182,7 +189,7 @@ footer .back {
 }
 
 footer {
-  position: fixed;
+  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
@@ -208,21 +215,6 @@ footer {
   border-radius: 10px;
   padding: 7px 15px;
   text-shadow: 0 1px 4px #333;
-}
-
-.trains span.stpnm {
-  max-width: 75%;
-  display: inline-block;
-}
-
-.trains span.lg {
-  font-weight: 600;
-  font-size: 2.2rem;
-}
-
-.predictions .lg {
-  font-weight: 600;
-  text-shadow: 1px 1px 1px #111;
 }
 
 div.Brn {
@@ -257,8 +249,6 @@ div.Y {
   color: #111;
   text-shadow: none;
 }
-
-
 
 @keyframes spin {
   from {

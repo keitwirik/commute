@@ -30,7 +30,7 @@ function trainStops() {
 
     const template = `
         <header>
-          <h1 class="heading-1">Routes</h1>
+          <h1 class="heading-1">Stops</h1>
         </header>
         <ul class="trains">
           ${trainParentStops

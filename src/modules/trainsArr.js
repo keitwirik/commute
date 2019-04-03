@@ -1,38 +1,47 @@
 export const trainColors = [
   {
-    line_id: "red",
-    line_name: "Red"
+    ctatt_rt: "red", // name of line from cta api
+    trainStopData_id: "red", // name of line from data.cityofchicago.org
+    display_name: "Red"
   },
   {
-    line_id: "blue",
-    line_name: "Blue"
+    ctatt_rt: "blue",
+    trainStopData_id: "blue",
+    display_name: "Blue"
   },
   {
-    line_id: "brn",
-    line_name: "Brown"
+    ctatt_rt: "brn",
+    trainStopData_id: "brn",
+    display_name: "Brown"
   },
   {
-    line_id: "g",
-    line_name: "Green"
+    ctatt_rt: "g",
+    trainStopData_id: "g",
+    display_name: "Green"
   },
   {
-    line_id: "p",
-    line_name: "Purple"
+    ctatt_rt: "p",
+    trainStopData_id: "p",
+    display_name: "Purple"
   },
   {
-    line_id: "pexp",
-    line_name: "Purple Express"
+    ctatt_rt: "pexp",
+    trainStopData_id: "pexp",
+    display_name: "Purple Express"
   },
   {
-    line_id: "y",
-    line_name: "Yellow"
+    ctatt_rt: "y",
+    trainStopData_id: "y",
+    display_name: "Yellow"
   },
   {
-    line_id: "pink",
-    line_name: "Pink"
+    ctatt_rt: "pink",
+    trainStopData_id: "pnk",
+    display_name: "Pink"
   },
   {
-    line_id: "o",
-    line_name: "Orange"
+    ctatt_rt: "org",
+    trainStopData_id: "o",
+    display_name: "Orange"
   }
 ];
